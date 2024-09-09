@@ -58,7 +58,6 @@ export const AuthProvider = ({ children }: Props) => {
     useEffect(() => {
         const verify = async () => {
             try {
-                console.log('ユーザー情報取得')
                 setIsLoading(true)
                 const token = cookies.token
                 await apiGet('http://127.0.0.1:8000/verify', token)
