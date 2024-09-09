@@ -15,31 +15,35 @@ const config: Config = {
         },
         colors: {
             shallow: {
-                light: '#f4f4f5',
+                light: '#fafafa',
                 dark: '#525252',
             },
             medium: {
-                light: '#e4e4e7',
+                light: '#f4f4f5',
                 dark: '#404040',
             },
             deep: {
-                light: '#d4d4d8',
+                light: '#e4e4e7',
                 dark: '#262626',
             },
             profound: {
-                light: '#a1a1aa',
+                light: '#d4d4d8',
                 dark: '#171717',
             },
             abyssal: {
-                light: '#71717a',
+                light: '#a1a1aa',
                 dark: '#0a0a0a',
             },
             typography: {
                 light: '#020617',
                 dark: '#e5e7eb',
             },
-            success: '#4ade80',
+            success: '#22c55e',
             danger: '#f43f5e',
+            transparent: 'transparent',
+            focus: '#6366f1',
+            error: '#e11d48',
+            nav: '#818cf8',
         },
     },
     plugins: [],

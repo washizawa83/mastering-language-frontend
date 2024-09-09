@@ -1,7 +1,10 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 
+import { LoadingComponent } from '@/app/_components/Loading'
 import { Header } from '@/app/_layouts/Header'
+import { AuthProvider } from '@/app/providers/AuthProvider'
+import { CookiesProvider } from 'react-cookie'
 import './globals.css'
 
 type ThemeContextType = {
@@ -37,10 +40,15 @@ export default function RootLayout({
 
     return (
         <html lang="en" className={theme}>
-            <body>
-                <Header />
+            <body className="tracking-wider bg-medium-light dark:bg-medium-dark">
                 <ThemeContext.Provider value={{ theme, toggleTheme }}>
-                    {children}
+                    <CookiesProvider>
+                        <AuthProvider>
+                            <Header />
+                            <LoadingComponent />
+                            {children}
+                        </AuthProvider>
+                    </CookiesProvider>
                 </ThemeContext.Provider>
             </body>
         </html>
