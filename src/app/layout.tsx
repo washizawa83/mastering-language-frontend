@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import { LoadingComponent } from '@/app/_components/Loading'
+import { Footer } from '@/app/_layouts/Footer'
 import { Header } from '@/app/_layouts/Header'
 import { AuthProvider } from '@/app/providers/AuthProvider'
 import { CookiesProvider } from 'react-cookie'
@@ -47,6 +48,7 @@ export default function RootLayout({
                             <Header />
                             <LoadingComponent />
                             {children}
+                            <Footer />
                         </AuthProvider>
                     </CookiesProvider>
                 </ThemeContext.Provider>
