@@ -72,7 +72,7 @@ export const LoginPage = () => {
         setIsLoading(false)
         setCookie('token', response.data.access_token, { path: '/' })
         signin()
-        router.push('/')
+        router.push('/pages/decks')
     }
 
     const loginUser = async (data: LoginFormInput) => {

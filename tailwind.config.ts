@@ -44,6 +44,7 @@ const config: Config = {
             focus: '#6366f1',
             error: '#e11d48',
             nav: '#818cf8',
+            teal: '#4da6a6',
         },
     },
     plugins: [],
