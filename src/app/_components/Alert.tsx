@@ -31,7 +31,7 @@ export default function TransitionAlert({ message, severity }: Props) {
                             <CloseIcon fontSize="inherit" />
                         </IconButton>
                     }
-                    sx={{ mb: 2, color: '#111' }}
+                    sx={{ mb: 2 }}
                 >
                     {message}
                 </Alert>
