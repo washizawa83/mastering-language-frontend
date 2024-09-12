@@ -1,7 +1,6 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import { FloatingHeadLine } from '@/app/_components/FloatingHeadLine'
 import { LoadingComponent } from '@/app/_components/Loading'
 import { Footer } from '@/app/_layouts/Footer'
 import { Header } from '@/app/_layouts/Header'
@@ -49,7 +48,6 @@ export default function RootLayout({
                     <CookiesProvider>
                         <AuthProvider>
                             <Header />
-                            <FloatingHeadLine />
                             <LoadingComponent />
                             {children}
                             <Footer />
