@@ -1,6 +1,8 @@
 import { HeaderLink } from '@/app/_components/HeaderLink'
 import { useAuthContext } from '@/app/providers/AuthProvider'
+import Image from 'next/image'
 import { BsFillLockFill, BsStack } from 'react-icons/bs'
+import localImage from '../../public/mastering-language.png'
 
 const navItems = [
     {
@@ -18,9 +20,12 @@ export const Header = () => {
             <header className="w-full h-10 bg-profound-light dark:bg-profound-dark">
                 <div className="flex flex-wrap justify-between items-center size-11/12 mx-auto min-h-10 h-full">
                     <div>
-                        <h1 className="text-base md:text-2xl text-typography-light dark:text-typography-dark">
-                            Mastering Language
-                        </h1>
+                        <Image
+                            src={localImage}
+                            alt="logo"
+                            width="30"
+                            height="30"
+                        />
                     </div>
                     <nav>
                         <ul className="flex">

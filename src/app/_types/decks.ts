@@ -1,4 +1,4 @@
-export type DecksResponse = {
+export type DeckResponse = {
     id: string
     name: string
     updatedAt: string
