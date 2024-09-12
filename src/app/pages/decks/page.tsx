@@ -1,13 +1,14 @@
 'use client'
 import { BasePage } from '@/app/_layouts/BasePage'
 import { apiGet } from '@/app/_service/api'
-import { DecksResponse } from '@/app/_types/decks'
+import { DeckResponse } from '@/app/_types/decks'
 import camelcaseKeys from 'camelcase-keys'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
 export const DeckPage = () => {
-    const [decks, setDecks] = useState<DecksResponse[] | null>(null)
+    const [decks, setDecks] = useState<DeckResponse[] | null>(null)
     const [cookies] = useCookies(['token'])
 
     useEffect(() => {
@@ -15,13 +16,12 @@ export const DeckPage = () => {
             try {
                 const token = cookies.token
                 if (!token) return
-                const fetchedDecks: DecksResponse[] = await apiGet(
+                const fetchedDecks: DeckResponse[] = await apiGet(
                     'http://127.0.0.1:8000/decks',
                     token,
                 )
 
                 setDecks(camelcaseKeys(fetchedDecks))
-                console.log(camelcaseKeys(fetchedDecks))
             } catch (error) {
                 console.log(error)
             }
@@ -36,11 +36,13 @@ export const DeckPage = () => {
                 {decks?.map((deck) => (
                     <div
                         key={deck.id}
-                        className="p-3 mb-3 h-32 border rounded-lg border-abyssal-light dark:border-abyssal-dark cursor-pointer hover:bg-deep-light hover:dark:bg-deep-dark"
+                        className="p-3 mb-3 border rounded-lg border-abyssal-light dark:border-abyssal-dark cursor-pointer hover:bg-deep-light hover:dark:bg-deep-dark"
                     >
-                        <div>
-                            <h3 className="ml-5 mt-3 text-teal">{deck.name}</h3>
-                        </div>
+                        <Link href={`/pages/cards?deck=${deck.id}`}>
+                            <div className="h-32">
+                                <h3 className="ml-5 mt-3">{deck.name}</h3>
+                            </div>
+                        </Link>
                     </div>
                 ))}
             </div>
