@@ -53,7 +53,7 @@ export const CardsPage = () => {
                         <Button label="Add" icon={<BsPlusLg />} />
                     </div>
                 </div>
-                {cards?.map((card) => <Card card={card} />)}
+                {cards?.map((card) => <Card key={card.id} card={card} />)}
             </div>
         </BasePage>
     )
