@@ -23,7 +23,7 @@ interface AuthContextProps {
     isAuth: boolean
     isLoading: boolean
     userInfo: UserInfo | null
-    signin: () => void
+    signin: (token: string) => void
     signout: () => void
 }
 const AuthContext = createContext<AuthContextProps>({
@@ -42,16 +42,18 @@ export const AuthProvider = ({ children }: Props) => {
     const [isAuth, setIsAuth] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-    const [cookies] = useCookies(['token'])
+    const [cookies, setCookie, removeCookie] = useCookies(['token'])
 
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
-    const signin = () => {
+    const signin = (token: string) => {
+        setCookie('token', token, { path: '/' })
         setIsAuth(true)
     }
 
     const signout = () => {
+        removeCookie('token')
         setIsAuth(false)
     }
 
@@ -62,7 +64,7 @@ export const AuthProvider = ({ children }: Props) => {
                 const token = cookies.token
                 await apiGet('http://127.0.0.1:8000/verify', token)
                 const user = await apiGet('http://127.0.0.1:8000/user', token)
-                signin()
+                signin(token)
                 setUserInfo(user)
                 setIsLoading(false)
             } catch (error) {
