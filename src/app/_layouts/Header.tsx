@@ -3,7 +3,8 @@ import { HeaderLink } from '@/app/_components/HeaderLink'
 import { MenuButton, MenuItem } from '@/app/_components/MenuButton'
 import { useAuthContext } from '@/app/providers/AuthProvider'
 import Image from 'next/image'
-import router from 'next/router'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { BsFillLockFill, BsStack } from 'react-icons/bs'
 import { MdLogout } from 'react-icons/md'
 import { TbSettingsFilled } from 'react-icons/tb'
@@ -19,6 +20,8 @@ const navItems = [
 
 export const Header = () => {
     const { isAuth, userInfo } = useAuthContext()
+    const { signout } = useAuthContext()
+    const router = useRouter()
 
     const menuItems: MenuItem[] = [
         {
@@ -29,7 +32,10 @@ export const Header = () => {
         {
             label: 'Logout',
             icon: <MdLogout />,
-            handleClick: () => {},
+            handleClick: () => {
+                signout()
+                router.push('/')
+            },
         },
     ]
 
@@ -38,24 +44,27 @@ export const Header = () => {
             <header className="w-full h-10 bg-profound-light dark:bg-profound-dark">
                 <div className="flex flex-wrap justify-between items-center size-11/12 mx-auto min-h-10 h-full">
                     <div>
-                        <Image
-                            src={localImage}
-                            alt="logo"
-                            width="30"
-                            height="30"
-                        />
+                        <Link href="/">
+                            <Image
+                                src={localImage}
+                                alt="logo"
+                                width="30"
+                                height="30"
+                            />
+                        </Link>
                     </div>
                     <nav>
                         <ul className="flex">
-                            {navItems.map((item, i) => (
-                                <li className="flex" key={i}>
-                                    <HeaderLink
-                                        link={item.link}
-                                        label={item.label}
-                                        icon={item.icon}
-                                    />
-                                </li>
-                            ))}
+                            {isAuth &&
+                                navItems.map((item, i) => (
+                                    <li className="flex" key={i}>
+                                        <HeaderLink
+                                            link={item.link}
+                                            label={item.label}
+                                            icon={item.icon}
+                                        />
+                                    </li>
+                                ))}
                             {isAuth && userInfo?.username ? (
                                 <div className="ml-10">
                                     <MenuButton

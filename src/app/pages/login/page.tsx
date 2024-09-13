@@ -7,6 +7,7 @@ import { BaseAuthForm } from '@/app/_forms/BaseAuthForm'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { LoadingButton } from '@/app/_forms/LoadingButton'
+import { PasswordInput } from '@/app/_forms/PasswordInput'
 import { apiPost } from '@/app/_service/api'
 import { LoginAndVerifyRequest, LoginRequest } from '@/app/_types/auth'
 import { useAuthContext } from '@/app/providers/AuthProvider'
@@ -14,7 +15,6 @@ import axios, { AxiosResponse } from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useCookies } from 'react-cookie'
 
 export interface LoginFormInput {
     email: string
@@ -34,7 +34,7 @@ const loginAndVerifyUserSchema = z.object({
     verificationCode: z.string().min(6, '認証コードは6桁で入力してください'),
 })
 
-const registerUserFormInfos: {
+const registerUserFormConfigs: {
     name: 'email' | 'password'
     type: 'text' | 'email' | 'password'
 }[] = [
@@ -57,7 +57,6 @@ export const LoginPage = () => {
     })
 
     const { signin } = useAuthContext()
-    const [, setCookie] = useCookies(['token'])
 
     const [isLoading, setIsLoading] = useState(false)
     const [isInActiveUser, setIsInActiveUser] = useState(false)
@@ -70,8 +69,7 @@ export const LoginPage = () => {
 
     const successUser = (response: AxiosResponse) => {
         setIsLoading(false)
-        setCookie('token', response.data.access_token, { path: '/' })
-        signin()
+        signin(response.data.access_token)
         router.push('/pages/decks')
     }
 
@@ -144,21 +142,36 @@ export const LoginPage = () => {
                           )
                         : loginForm.handleSubmit(onSubmitToLogin)
                 }
-                className="p-5"
+                className="px-5"
             >
                 <div className="flex flex-col">
                     {!isInActiveUser &&
-                        registerUserFormInfos.map((info) => (
-                            <BaseInput
-                                label={info.name}
-                                id={info.name}
-                                type={info.type}
-                                register={loginForm.register(info.name)}
-                                error={loginForm.formState.errors[info.name]}
-                                disabled={isInActiveUser}
-                                key={info.name}
-                            />
-                        ))}
+                        registerUserFormConfigs.map((config) =>
+                            config.type === 'password' ? (
+                                <PasswordInput
+                                    label={config.name}
+                                    id={config.name}
+                                    register={loginForm.register(config.name)}
+                                    error={
+                                        loginForm.formState.errors[config.name]
+                                    }
+                                    disabled={isInActiveUser}
+                                    key={config.name}
+                                />
+                            ) : (
+                                <BaseInput
+                                    label={config.name}
+                                    id={config.name}
+                                    type={config.type}
+                                    register={loginForm.register(config.name)}
+                                    error={
+                                        loginForm.formState.errors[config.name]
+                                    }
+                                    disabled={isInActiveUser}
+                                    key={config.name}
+                                />
+                            ),
+                        )}
                     {isInActiveUser && (
                         <BaseInput
                             label="verify code"
@@ -173,7 +186,7 @@ export const LoginPage = () => {
                         />
                     )}
                 </div>
-                <div className="text-center mt-8">
+                <div className="text-center mt-5">
                     {isLoading ? (
                         <LoadingButton />
                     ) : (

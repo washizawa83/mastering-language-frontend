@@ -1,6 +1,4 @@
 'use client'
-
-import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 export type MenuItem = {
@@ -17,12 +15,10 @@ type Props = {
 export const MenuButton = ({ label, items }: Props) => {
     const [isOpen, setIsOpen] = useState(false)
     const menuRef = useRef(null)
-    const router = useRouter()
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
-                console.log(menuRef)
                 setIsOpen(false)
             }
         }
@@ -33,9 +29,9 @@ export const MenuButton = ({ label, items }: Props) => {
         }
     }, [menuRef])
 
-    const handleItemClick = () => {
+    const handleItemClick = (item: MenuItem) => {
         setIsOpen(false)
-        router.push('/pages/settings')
+        item.handleClick()
     }
 
     return (
@@ -59,7 +55,7 @@ export const MenuButton = ({ label, items }: Props) => {
                                     <li
                                         key={index}
                                         className="flex items-center p-2 cursor-pointer hover:bg-profound-light dark:hover:bg-profound-dark"
-                                        onClick={() => handleItemClick()}
+                                        onClick={() => handleItemClick(item)}
                                     >
                                         <span className="basis-2/6 ml-3">
                                             {item.icon}
