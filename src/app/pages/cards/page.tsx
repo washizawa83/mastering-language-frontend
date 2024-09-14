@@ -50,7 +50,11 @@ export const CardsPage = () => {
                         </div>
                     </div>
                     <div>
-                        <Button label="カード追加" icon={<BsPlusLg />} />
+                        <Button
+                            label="カード追加"
+                            icon={<BsPlusLg />}
+                            onClick={() => {}}
+                        />
                     </div>
                 </div>
                 {cards && cards.length > 0 ? (

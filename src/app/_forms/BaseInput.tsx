@@ -8,6 +8,8 @@ type Props = {
     register: UseFormRegisterReturn
     error?: FieldError
     disabled?: boolean
+    initialValue?: string
+    placeholder?: string
 }
 
 export const BaseInput = ({
@@ -17,6 +19,8 @@ export const BaseInput = ({
     register,
     error,
     disabled = false,
+    initialValue,
+    placeholder,
 }: Props) => {
     return (
         <div className="flex flex-col p-2 w-100">
@@ -34,6 +38,8 @@ export const BaseInput = ({
                 id={id}
                 {...register}
                 disabled={disabled}
+                defaultValue={initialValue}
+                placeholder={placeholder}
             />
             <span className="text-error text-xs h-4">
                 {error && error.message}

@@ -9,7 +9,7 @@ export type MenuItem = {
 }
 
 type Props = {
-    label: string
+    label: string | JSX.Element
     items: MenuItem[]
 }
 
@@ -30,7 +30,16 @@ export const MenuButton = ({ label, items }: Props) => {
         }
     }, [menuRef])
 
-    const handleItemClick = (item: MenuItem) => {
+    const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+        event.stopPropagation()
+        setIsOpen(!isOpen)
+    }
+
+    const handleItemClick = (
+        event: React.MouseEvent<HTMLElement>,
+        item: MenuItem,
+    ) => {
+        event.stopPropagation()
         setIsOpen(false)
         item.handleClick()
     }
@@ -43,20 +52,21 @@ export const MenuButton = ({ label, items }: Props) => {
                         className="relative ml-3 text-typography-light dark:text-typography-dark"
                         ref={menuRef}
                     >
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            type="button"
+                        <div  
+                            onClick={(event) => handleOpenMenu(event)} 
                             className="relative flex rounded-full bg-gray-800"
                         >
                             {label}
-                        </button>
+                        </div>
                         {isOpen && (
                             <ul className="absolute -right-3 z-10 mt-2 w-40 origin-top-right rounded-md py-1 shadow-lg bg-deep-light dark:bg-deep-dark text-typography-light dark:text-typography-dark">
                                 {items.map((item, index) => (
                                     <li
                                         key={index}
                                         className="flex items-center p-2 text-sm cursor-pointer hover:bg-profound-light dark:hover:bg-profound-dark"
-                                        onClick={() => handleItemClick(item)}
+                                        onClick={(event) =>
+                                            handleItemClick(event, item)
+                                        }
                                     >
                                         <span className="basis-2/6 ml-3">
                                             <IconContext.Provider
