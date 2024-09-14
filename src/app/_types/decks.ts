@@ -4,3 +4,11 @@ export type DeckResponse = {
     updatedAt: string
     createdAt: string
 }
+
+export type DeckWithCardCountResponse = {
+    cardCount: number
+} & DeckResponse
+
+export type DeckCreateRequest = {
+    name: string
+}

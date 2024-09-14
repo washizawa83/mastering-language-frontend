@@ -45,6 +45,7 @@ const config: Config = {
             error: '#e11d48',
             nav: '#818cf8',
             teal: '#4da6a6',
+            flowerBlue: '#6495ed',
         },
     },
     plugins: [],
