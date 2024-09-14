@@ -9,9 +9,9 @@ export const Footer = () => {
         isAuth && (
             <div className="w-full md:hidden fixed bottom-0 bg-profound-light dark:bg-profound-dark">
                 <div className="flex items-center justify-around h-12 text-typography-light dark:text-typography-dark">
-                    <FooterLink label="Home" link="/" icon={<GoHomeFill />} />
+                    <FooterLink label="ホーム" link="/" icon={<GoHomeFill />} />
                     <FooterLink
-                        label="Deck"
+                        label="デッキ"
                         link="/pages/decks"
                         icon={<BsStack />}
                     />

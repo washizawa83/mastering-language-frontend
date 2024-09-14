@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { IconContext } from 'react-icons'
 
 export type MenuItem = {
     label: string
@@ -50,15 +51,19 @@ export const MenuButton = ({ label, items }: Props) => {
                             {label}
                         </button>
                         {isOpen && (
-                            <ul className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md py-1 shadow-lg bg-deep-light dark:bg-deep-dark text-typography-light dark:text-typography-dark">
+                            <ul className="absolute -right-3 z-10 mt-2 w-40 origin-top-right rounded-md py-1 shadow-lg bg-deep-light dark:bg-deep-dark text-typography-light dark:text-typography-dark">
                                 {items.map((item, index) => (
                                     <li
                                         key={index}
-                                        className="flex items-center p-2 cursor-pointer hover:bg-profound-light dark:hover:bg-profound-dark"
+                                        className="flex items-center p-2 text-sm cursor-pointer hover:bg-profound-light dark:hover:bg-profound-dark"
                                         onClick={() => handleItemClick(item)}
                                     >
                                         <span className="basis-2/6 ml-3">
-                                            {item.icon}
+                                            <IconContext.Provider
+                                                value={{ size: '20px' }}
+                                            >
+                                                {item.icon}
+                                            </IconContext.Provider>
                                         </span>
                                         <span>{item.label}</span>
                                     </li>

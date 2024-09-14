@@ -50,10 +50,14 @@ export const CardsPage = () => {
                         </div>
                     </div>
                     <div>
-                        <Button label="Add" icon={<BsPlusLg />} />
+                        <Button label="カード追加" icon={<BsPlusLg />} />
                     </div>
                 </div>
-                {cards?.map((card) => <Card key={card.id} card={card} />)}
+                {cards && cards.length > 0 ? (
+                    cards?.map((card) => <Card key={card.id} card={card} />)
+                ) : (
+                    <h3 className="text-center">カードが追加されていません</h3>
+                )}
             </div>
         </BasePage>
     )

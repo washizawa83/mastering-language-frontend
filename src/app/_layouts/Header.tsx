@@ -12,7 +12,7 @@ import localImage from '../../public/mastering-language.png'
 
 const navItems = [
     {
-        label: 'Deck',
+        label: 'デッキ',
         link: '/pages/decks',
         icon: <BsStack />,
     },
@@ -25,12 +25,12 @@ export const Header = () => {
 
     const menuItems: MenuItem[] = [
         {
-            label: 'Settings',
+            label: '設定',
             icon: <TbSettingsFilled />,
             handleClick: () => router.push('/pages/settings'),
         },
         {
-            label: 'Logout',
+            label: 'ログアウト',
             icon: <MdLogout />,
             handleClick: () => {
                 signout()
@@ -76,7 +76,7 @@ export const Header = () => {
                                 <div className="md:flex">
                                     <HeaderLink
                                         link="/pages/login"
-                                        label="Login"
+                                        label="ログイン"
                                         icon={
                                             <BsFillLockFill className="text-success text-lg" />
                                         }

@@ -33,18 +33,22 @@ export const DeckPage = () => {
     return (
         <BasePage>
             <div className="mt-10">
-                {decks?.map((deck) => (
-                    <div
-                        key={deck.id}
-                        className="p-3 mb-3 border rounded-lg border-abyssal-light dark:border-abyssal-dark cursor-pointer hover:bg-deep-light hover:dark:bg-deep-dark"
-                    >
-                        <Link href={`/pages/cards?deck=${deck.id}`}>
-                            <div className="h-32">
-                                <h3 className="ml-5 mt-3">{deck.name}</h3>
-                            </div>
-                        </Link>
-                    </div>
-                ))}
+                {decks && decks.length > 0 ? (
+                    decks?.map((deck) => (
+                        <div
+                            key={deck.id}
+                            className="p-3 mb-3 border rounded-lg border-abyssal-light dark:border-abyssal-dark cursor-pointer hover:bg-deep-light hover:dark:bg-deep-dark"
+                        >
+                            <Link href={`/pages/cards?deck=${deck.id}`}>
+                                <div className="h-32">
+                                    <h3 className="ml-5 mt-3">{deck.name}</h3>
+                                </div>
+                            </Link>
+                        </div>
+                    ))
+                ) : (
+                    <h3 className="text-center">デッキが追加されていません</h3>
+                )}
             </div>
         </BasePage>
     )
