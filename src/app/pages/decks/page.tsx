@@ -1,6 +1,7 @@
 'use client'
 import { BaseModal } from '@/app/_components/BaseModal'
 import { Button } from '@/app/_components/Button'
+import { Deck } from '@/app/_components/Deck'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { BasePage } from '@/app/_layouts/BasePage'
@@ -11,18 +12,17 @@ import {
 } from '@/app/_types/decks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import camelcaseKeys from 'camelcase-keys'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { BsPlusLg, BsThreeDotsVertical } from 'react-icons/bs'
+import { BsPlusLg } from 'react-icons/bs'
 import { z } from 'zod'
 
-interface CreateDeckForm {
+export interface CreateDeckForm {
     name: string
 }
 
-const createDeckSchema = z.object({
+export const createDeckSchema = z.object({
     name: z
         .string()
         .min(1, '名前を入力してください')
@@ -101,33 +101,7 @@ export const DeckPage = () => {
                     </div>
                 </div>
                 {decks && decks.length > 0 ? (
-                    decks?.map((deck) => (
-                        <div
-                            key={deck.id}
-                            className="p-3 mb-3 border rounded-lg border-abyssal-light dark:border-abyssal-dark cursor-pointer hover:bg-deep-light hover:dark:bg-deep-dark"
-                        >
-                            <Link href={`/pages/cards?deck=${deck.id}`}>
-                                <div className="flex h-20">
-                                    <div className="basis-11/12">
-                                        <div className="flex justify-between items-center pr-5 ">
-                                            <h3>{deck.name}</h3>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-center items-center relative">
-                                        <span className="absolute top-0 right-0">
-                                            <BsThreeDotsVertical />
-                                        </span>
-                                        <h3 className="md:text-3xl text-xl font-mono font-light text-flowerBlue pr-2">
-                                            {deck.cardCount}
-                                            <span className="text-xs">
-                                                /cards
-                                            </span>
-                                        </h3>
-                                    </div>
-                                </div>
-                            </Link>
-                        </div>
-                    ))
+                    decks?.map((deck) => <Deck deck={deck} key={deck.id} />)
                 ) : (
                     <h3 className="text-center">デッキが追加されていません</h3>
                 )}
@@ -148,7 +122,7 @@ export const DeckPage = () => {
                             <BaseButton
                                 label="作成"
                                 type="submit"
-                                handleClick={() => {}}
+                                handleClick={() => setIsOpenModal(false)}
                             />
                         </div>
                     </form>
