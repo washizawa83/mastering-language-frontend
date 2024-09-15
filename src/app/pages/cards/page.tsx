@@ -4,6 +4,7 @@ import { Card } from '@/app/_components/Card'
 import { BasePage } from '@/app/_layouts/BasePage'
 import { apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import camelcaseKeys from 'camelcase-keys'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -13,6 +14,7 @@ import { BsPlusLg, BsSearch } from 'react-icons/bs'
 export const CardsPage = () => {
     const [cards, setCards] = useState<CardResponse[] | null>(null)
 
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -23,6 +25,7 @@ export const CardsPage = () => {
             const deckId = searchParams.get('deck')
             if (!token || !deckId) return
 
+            setIsLoading(true)
             try {
                 const urlParams: UrlParams = {
                     endpoint: `cards/${deckId}`,
@@ -33,6 +36,7 @@ export const CardsPage = () => {
             } catch (error) {
                 console.log(error)
             }
+            setIsLoading(false)
         }
 
         fetchCards()

@@ -13,6 +13,7 @@ import {
     DeckWithCardCountResponse,
 } from '@/app/_types/decks'
 import { CreateDeckForm, createDeckSchema } from '@/app/pages/decks/page'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -39,10 +40,10 @@ const deleteDeckSchema = z.object({
 export const Deck = ({ deck }: Props) => {
     const [isOpenEditModal, setIsOpenEditModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
-    const [_, setIsLoading] = useState(false)
     const [deckViewModel, setDeckViewModel] =
         useState<DeckWithCardCountResponse | null>(deck)
 
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -93,11 +94,10 @@ export const Deck = ({ deck }: Props) => {
             if (response) {
                 setDeckViewModel(response)
             }
-            setIsLoading(false)
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     const deleteDeck = async () => {
@@ -112,11 +112,10 @@ export const Deck = ({ deck }: Props) => {
             }
             const response = await apiDelete(urlParams)
             setDeckViewModel(response)
-            setIsLoading(false)
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     if (!deckViewModel) return

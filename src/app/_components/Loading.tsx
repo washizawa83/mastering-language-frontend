@@ -1,4 +1,4 @@
-import { useAuthContext } from '@/app/providers/AuthProvider'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
 
@@ -9,7 +9,8 @@ interface LoadingProps {
 export const LoadingComponent: React.FC<LoadingProps> = ({
     height = '100vh',
 }) => {
-    const { isLoading } = useAuthContext()
+    // const { isLoading } = useAuthContext()
+    const { isLoading } = useLayoutContext()
     return (
         isLoading && (
             <Box

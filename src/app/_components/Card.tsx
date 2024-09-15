@@ -4,6 +4,7 @@ import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { apiDelete, apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -29,7 +30,6 @@ const deleteDeckSchema = z.object({
 
 export const Card = ({ card }: Props) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [_, setIsLoading] = useState(false)
     const [isOpenDetailModal, setIsOpenDetailModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
     const [downloadedImage, setDownloadedImage] = useState<string | null>(null)
@@ -37,6 +37,7 @@ export const Card = ({ card }: Props) => {
         card,
     )
 
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -74,15 +75,14 @@ export const Card = ({ card }: Props) => {
                     token: token,
                 }
                 const response = await apiGet(urlParams)
-                setIsLoading(false)
                 if (response) {
                     const src = `data:image/png;base64,${response}`
                     setDownloadedImage(src)
                 }
             } catch (error) {
                 console.log(error)
-                setIsLoading(false)
             }
+            setIsLoading(false)
         }
 
         if (!isOpenDetailModal) return
@@ -101,11 +101,10 @@ export const Card = ({ card }: Props) => {
             }
             const response = await apiDelete(urlParams)
             setCardViewModel(response)
-            setIsLoading(false)
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     if (!cardViewModel) return

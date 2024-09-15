@@ -1,4 +1,5 @@
 import { apiGet, UrlParams } from '@/app/_service/api'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import axios from 'axios'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
@@ -21,14 +22,12 @@ type UserInfo = {
 
 interface AuthContextProps {
     isAuth: boolean
-    isLoading: boolean
     userInfo: UserInfo | null
     signin: (token: string) => void
     signout: () => void
 }
 const AuthContext = createContext<AuthContextProps>({
     isAuth: false,
-    isLoading: true,
     userInfo: null,
     signin: () => {},
     signout: () => {},
@@ -40,9 +39,10 @@ export const useAuthContext = () => {
 
 export const AuthProvider = ({ children }: Props) => {
     const [isAuth, setIsAuth] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
     const [cookies, setCookie, removeCookie] = useCookies(['token'])
+
+    const { setIsLoading } = useLayoutContext()
 
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: Props) => {
         <AuthContext.Provider
             value={{
                 isAuth,
-                isLoading,
                 signin,
                 signout,
                 userInfo,

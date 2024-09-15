@@ -10,6 +10,7 @@ import {
     DeckCreateRequest,
     DeckWithCardCountResponse,
 } from '@/app/_types/decks'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import camelcaseKeys from 'camelcase-keys'
 import { useEffect, useState } from 'react'
@@ -30,11 +31,11 @@ export const createDeckSchema = z.object({
 })
 
 export const DeckPage = () => {
-    const [, setIsLoading] = useState(false)
     const [isOpenModal, setIsOpenModal] = useState(false)
     const [decks, setDecks] = useState<DeckWithCardCountResponse[] | null>(null)
 
     const [cookies] = useCookies(['token'])
+    const { setIsLoading } = useLayoutContext()
 
     const createDeckForm = useForm<CreateDeckForm>({
         resolver: zodResolver(createDeckSchema),
@@ -49,6 +50,7 @@ export const DeckPage = () => {
             const token = cookies.token
             if (!token) return
 
+            setIsLoading(true)
             try {
                 const urlParams: UrlParams = {
                     endpoint: 'decks-with-card-count',
@@ -61,6 +63,7 @@ export const DeckPage = () => {
             } catch (error) {
                 console.log(error)
             }
+            setIsLoading(false)
         }
 
         fetchDecks()
@@ -84,11 +87,10 @@ export const DeckPage = () => {
             if (response) {
                 decks ? setDecks([...decks, response]) : setDecks([response])
             }
-            setIsLoading(false)
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     return (

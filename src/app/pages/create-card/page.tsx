@@ -7,6 +7,7 @@ import { UploadImagePreviewForm } from '@/app/_forms/UploadImagePreviewForm'
 import { BasePage } from '@/app/_layouts/BasePage'
 import { apiPost, apiPostForFile, UpdateUrlParams } from '@/app/_service/api'
 import { CardCreateRequest } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
@@ -39,7 +40,6 @@ const CardCreateSchema = z.object({
 })
 
 export const CreateCardPage = () => {
-    const [, setIsLoading] = useState(false)
     const [isNextCreate, setIsNextCreate] = useState(false)
     const [previewImage, setPreviewImage] = useState<ImageData | null>(null)
     const [uploadImageUrlResponse, setUploadImageUrlResponse] = useState<
@@ -50,6 +50,7 @@ export const CreateCardPage = () => {
     const reader = new FileReader()
     const searchParams = useSearchParams()
     const [cookies] = useCookies(['token'])
+    const { setIsLoading } = useLayoutContext()
 
     const cardCreateForm = useForm<CardCreateForm>({
         resolver: zodResolver(CardCreateSchema),
@@ -113,7 +114,6 @@ export const CreateCardPage = () => {
             }
             const response = await apiPostForFile(urlParams)
 
-            setIsLoading(false)
             if (response) {
                 reader.readAsDataURL(file)
                 reader.onload = () => {
@@ -126,8 +126,8 @@ export const CreateCardPage = () => {
             }
         } catch (error) {
             console.log(error)
-            setIsLoading(false)
         }
+        setIsLoading(false)
     }, [])
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -156,14 +156,10 @@ export const CreateCardPage = () => {
                 token: token,
             }
             const response = await apiPost(urlParams)
-
-            setIsLoading(false)
-            if (response) {
-            }
         } catch (error) {
             console.log(error)
-            setIsLoading(false)
         }
+        setIsLoading(false)
     }
 
     return (
