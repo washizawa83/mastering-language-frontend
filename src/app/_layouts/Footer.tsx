@@ -7,7 +7,7 @@ export const Footer = () => {
     const { isAuth } = useAuthContext()
     return (
         isAuth && (
-            <div className="w-full md:hidden fixed bottom-0 bg-profound-light dark:bg-profound-dark">
+            <div className="w-full z-20 md:hidden fixed bottom-0 bg-profound-light dark:bg-profound-dark">
                 <div className="flex items-center justify-around h-12 text-typography-light dark:text-typography-dark">
                     <FooterLink label="ホーム" link="/" icon={<GoHomeFill />} />
                     <FooterLink

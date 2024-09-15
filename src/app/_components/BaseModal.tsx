@@ -27,7 +27,13 @@ export const BaseModal = ({
         <Dialog
             open={isOpen}
             onClose={handleClose}
-            PaperProps={{ sx: { borderRadius: '8px', overflow: 'hidden' } }}
+            PaperProps={{
+                sx: {
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                },
+            }}
+            onClick={(event) => event.stopPropagation()}
         >
             {title && (
                 <DialogTitle

@@ -11,9 +11,10 @@ export type MenuItem = {
 type Props = {
     label: string | JSX.Element
     items: MenuItem[]
+    position?: 'right' | 'left'
 }
 
-export const MenuButton = ({ label, items }: Props) => {
+export const MenuButton = ({ label, items, position = 'right' }: Props) => {
     const [isOpen, setIsOpen] = useState(false)
     const menuRef = useRef(null)
 
@@ -52,14 +53,16 @@ export const MenuButton = ({ label, items }: Props) => {
                         className="relative ml-3 text-typography-light dark:text-typography-dark"
                         ref={menuRef}
                     >
-                        <div  
-                            onClick={(event) => handleOpenMenu(event)} 
+                        <div
+                            onClick={(event) => handleOpenMenu(event)}
                             className="relative flex rounded-full bg-gray-800"
                         >
                             {label}
                         </div>
                         {isOpen && (
-                            <ul className="absolute -right-3 z-10 mt-2 w-40 origin-top-right rounded-md py-1 shadow-lg bg-deep-light dark:bg-deep-dark text-typography-light dark:text-typography-dark">
+                            <ul
+                                className={`absolute ${position === 'right' ? '-right-3' : '-left-3'} z-10 mt-2 w-40 origin-top-right rounded-md py-1 shadow-lg bg-deep-light dark:bg-deep-dark text-typography-light dark:text-typography-dark`}
+                            >
                                 {items.map((item, index) => (
                                     <li
                                         key={index}

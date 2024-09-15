@@ -10,6 +10,17 @@ export const apiGet = async (endpoint: string, token?: string) => {
     return response.data
 }
 
+export const apiGetV2 = async (endpoint: string, token?: string) => {
+    const response = await axios.get(endpoint, {
+        headers: {
+            'Content-Type': 'application/json',
+            responseType: 'blob',
+            Authorization: token && `Bearer ${token}`,
+        },
+    })
+    return response.data
+}
+
 export const apiPost = async <T>(endpoint: string, body: T, token?: string) => {
     const response = await axios.post(
         endpoint,
