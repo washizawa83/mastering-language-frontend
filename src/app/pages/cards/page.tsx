@@ -5,7 +5,7 @@ import { BasePage } from '@/app/_layouts/BasePage'
 import { apiGet } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import camelcaseKeys from 'camelcase-keys'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { BsPlusLg, BsSearch } from 'react-icons/bs'
@@ -14,6 +14,7 @@ export const CardsPage = () => {
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
     const [cards, setCards] = useState<CardResponse[] | null>(null)
+    const router = useRouter()
 
     useEffect(() => {
         const fetchCards = async () => {
@@ -34,6 +35,12 @@ export const CardsPage = () => {
 
         fetchCards()
     }, [])
+
+    const onGoToCreateCardPage = () => {
+        const deckId = searchParams.get('deck')
+        router.push(`/pages/create-card?deck=${deckId}`)
+    }
+
     return (
         <BasePage>
             <div className="mt-10">
@@ -53,7 +60,7 @@ export const CardsPage = () => {
                         <Button
                             label="カード追加"
                             icon={<BsPlusLg />}
-                            onClick={() => {}}
+                            onClick={() => onGoToCreateCardPage()}
                         />
                     </div>
                 </div>
