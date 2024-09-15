@@ -17,3 +17,8 @@ export type VerifyUserRequest = {
     email: string
     verification_code: string
 }
+
+export type LoginResponse = {
+    access_token: string
+    token_type: string
+}

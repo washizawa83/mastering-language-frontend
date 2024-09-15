@@ -2,7 +2,7 @@
 import { Button } from '@/app/_components/Button'
 import { Card } from '@/app/_components/Card'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiGet } from '@/app/_service/api'
+import { apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import camelcaseKeys from 'camelcase-keys'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -22,10 +22,11 @@ export const CardsPage = () => {
                 const token = cookies.token
                 if (!token) return
                 const deckId = searchParams.get('deck')
-                const cards = await apiGet(
-                    `http://127.0.0.1:8000/cards/${deckId}`,
-                    token,
-                )
+                const urlParams: UrlParams = {
+                    endpoint: `cards/${deckId}`,
+                    token: token,
+                }
+                const cards = await apiGet(urlParams)
 
                 setCards(camelcaseKeys(cards))
             } catch (error) {

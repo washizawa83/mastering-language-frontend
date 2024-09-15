@@ -2,7 +2,7 @@ import { BaseModal } from '@/app/_components/BaseModal'
 import { MenuButton } from '@/app/_components/MenuButton'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
-import { apiDelete, apiGet } from '@/app/_service/api'
+import { apiDelete, apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -53,13 +53,12 @@ export const Card = ({ card }: Props) => {
 
         setIsLoading(true)
         try {
-            const response = await apiDelete(
-                `http://127.0.0.1:8000/card/${card.id}`,
-                token,
-            )
-            if (response) {
-                setCardViewModel(response)
+            const urlParams: UrlParams = {
+                endpoint: `card/${card.id}`,
+                token: token,
             }
+            const response = await apiDelete(urlParams)
+            setCardViewModel(response)
             setIsLoading(false)
         } catch (error) {
             setIsLoading(false)
@@ -90,10 +89,11 @@ export const Card = ({ card }: Props) => {
 
             setIsLoading(true)
             try {
-                const response = await apiGet(
-                    `http://127.0.0.1:8000/download-card-image/${card.id}`,
-                    token,
-                )
+                const urlParams: UrlParams = {
+                    endpoint: `download-card-image/${card.id}`,
+                    token: token,
+                }
+                const response = await apiGet(urlParams)
                 setIsLoading(false)
                 if (response) {
                     const src = `data:image/png;base64,${response}`

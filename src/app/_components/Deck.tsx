@@ -2,7 +2,12 @@ import { BaseModal } from '@/app/_components/BaseModal'
 import { MenuButton } from '@/app/_components/MenuButton'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
-import { apiDelete, apiPut } from '@/app/_service/api'
+import {
+    apiDelete,
+    apiPut,
+    UpdateUrlParams,
+    UrlParams,
+} from '@/app/_service/api'
 import {
     DeckCreateRequest,
     DeckWithCardCountResponse,
@@ -77,11 +82,12 @@ export const Deck = ({ deck }: Props) => {
             const requestBody: DeckCreateRequest = {
                 name: data.name,
             }
-            const response = await apiPut(
-                `http://127.0.0.1:8000/deck/${deck.id}`,
-                requestBody,
-                token,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: `deck/${deck.id}`,
+                body: requestBody,
+                token: token,
+            }
+            const response = await apiPut(urlParams)
             if (response) {
                 setDeckViewModel(response)
             }
@@ -97,13 +103,12 @@ export const Deck = ({ deck }: Props) => {
         try {
             const token = cookies.token
             if (!token) return
-            const response = await apiDelete(
-                `http://127.0.0.1:8000/deck/${deck.id}`,
-                token,
-            )
-            if (response) {
-                setDeckViewModel(response)
+            const urlParams: UrlParams = {
+                endpoint: `deck/${deck.id}`,
+                token: token,
             }
+            const response = await apiDelete(urlParams)
+            setDeckViewModel(response)
             setIsLoading(false)
         } catch (error) {
             setIsLoading(false)

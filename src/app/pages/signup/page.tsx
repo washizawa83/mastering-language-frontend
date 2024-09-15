@@ -9,7 +9,7 @@ import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { LoadingButton } from '@/app/_forms/LoadingButton'
 import { PasswordInput } from '@/app/_forms/PasswordInput'
-import { apiPost } from '@/app/_service/api'
+import { apiPost, UpdateUrlParams } from '@/app/_service/api'
 import { SignUpRequest, VerifyUserRequest } from '@/app/_types/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -122,10 +122,11 @@ export const SignUpPage = () => {
                 email: data.email,
                 password: data.confirmedPassword.password,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/signup',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'signup',
+                body: requestBody,
+            }
+            const response = await apiPost(urlParams)
             setIsLoading(false)
             if (response) {
                 setEmail(data.email)
@@ -145,10 +146,11 @@ export const SignUpPage = () => {
                 email: email,
                 verification_code: data.verificationCode,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/signup-verify',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'signup-verify',
+                body: requestBody,
+            }
+            const response = await apiPost(urlParams)
             setIsLoading(false)
             if (response) {
                 router.push('/pages/login')

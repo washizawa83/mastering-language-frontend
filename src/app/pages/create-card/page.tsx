@@ -3,7 +3,7 @@ import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { BaseTextArea } from '@/app/_forms/BaseTextArea'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiPost, apiPostForFile } from '@/app/_service/api'
+import { apiPost, apiPostForFile, UpdateUrlParams } from '@/app/_service/api'
 import { CardCreateRequest } from '@/app/_types/cards'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -89,11 +89,12 @@ export const CreateCardPage = () => {
             const requestBody = {
                 upload_image: file,
             }
-            const response = await apiPostForFile(
-                `http://127.0.0.1:8000/upload-card-image/${deckId}`,
-                requestBody,
-                token,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: `upload-card-image/${deckId}`,
+                body: requestBody,
+                token: token,
+            }
+            const response = await apiPostForFile(urlParams)
 
             setIsLoading(false)
             if (response) {
@@ -132,11 +133,12 @@ export const CreateCardPage = () => {
                 image_path: uploadImageUrlResponse,
                 etymology: data.etymology,
             }
-            const response = await apiPost(
-                `http://127.0.0.1:8000/card/${deckId}`,
-                requestBody,
-                token,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: `card/${deckId}`,
+                body: requestBody,
+                token: token,
+            }
+            const response = await apiPost(urlParams)
 
             setIsLoading(false)
             if (response) {

@@ -8,10 +8,14 @@ import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { LoadingButton } from '@/app/_forms/LoadingButton'
 import { PasswordInput } from '@/app/_forms/PasswordInput'
-import { apiPost } from '@/app/_service/api'
-import { LoginAndVerifyRequest, LoginRequest } from '@/app/_types/auth'
+import { apiPost, UpdateUrlParams } from '@/app/_service/api'
+import {
+    LoginAndVerifyRequest,
+    LoginRequest,
+    LoginResponse,
+} from '@/app/_types/auth'
 import { useAuthContext } from '@/app/providers/AuthProvider'
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -67,9 +71,9 @@ export const LoginPage = () => {
 
     const router = useRouter()
 
-    const successUser = (response: AxiosResponse) => {
+    const successUser = (response: LoginResponse) => {
         setIsLoading(false)
-        signin(response.data.access_token)
+        signin(response.access_token)
         router.push('/pages/decks')
     }
 
@@ -80,10 +84,11 @@ export const LoginPage = () => {
                 email: data.email,
                 password: data.password,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/login',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'login',
+                body: requestBody,
+            }
+            const response: LoginResponse = await apiPost(urlParams)
             if (response) {
                 successUser(response)
             }
@@ -110,10 +115,11 @@ export const LoginPage = () => {
                 password: cacheLoginInfo.password,
                 verification_code: data.verificationCode,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/login-and-user-verify',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'login-and-user-verify',
+                body: requestBody,
+            }
+            const response: LoginResponse = await apiPost(urlParams)
             if (response) {
                 successUser(response)
             }
@@ -201,7 +207,7 @@ export const LoginPage = () => {
             <div className="flex justify-center">
                 <Link
                     href="/pages/signup"
-                    className="flex items-center p-2 tracking-wider text-nav text-sm"
+                    className="flex items-center p-2 tracking-wider text-nav"
                 >
                     新規ユーザー登録はこちら
                 </Link>

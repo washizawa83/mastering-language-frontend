@@ -5,7 +5,7 @@ import { Deck } from '@/app/_components/Deck'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiGet, apiPost } from '@/app/_service/api'
+import { apiGet, apiPost, UpdateUrlParams, UrlParams } from '@/app/_service/api'
 import {
     DeckCreateRequest,
     DeckWithCardCountResponse,
@@ -44,10 +44,12 @@ export const DeckPage = () => {
             try {
                 const token = cookies.token
                 if (!token) return
-                const fetchedDecks: DeckWithCardCountResponse[] = await apiGet(
-                    'http://127.0.0.1:8000/decks-with-card-count',
-                    token,
-                )
+                const urlParams: UrlParams = {
+                    endpoint: 'decks-with-card-count',
+                    token: token,
+                }
+                const fetchedDecks: DeckWithCardCountResponse[] =
+                    await apiGet(urlParams)
 
                 setDecks(camelcaseKeys(fetchedDecks))
             } catch (error) {
@@ -66,11 +68,12 @@ export const DeckPage = () => {
             const requestBody: DeckCreateRequest = {
                 name: data.name,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/deck',
-                requestBody,
-                token,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'deck',
+                body: requestBody,
+                token: token,
+            }
+            const response = await apiPost(urlParams)
             if (response) {
                 decks ? setDecks([...decks, response]) : setDecks([response])
             }
