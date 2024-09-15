@@ -41,14 +41,15 @@ const CardCreateSchema = z.object({
 export const CreateCardPage = () => {
     const [, setIsLoading] = useState(false)
     const [isNextCreate, setIsNextCreate] = useState(false)
-    const searchParams = useSearchParams()
-    const reader = new FileReader()
-    const router = useRouter()
-    const [cookies] = useCookies(['token'])
     const [previewImage, setPreviewImage] = useState<ImageData | null>(null)
     const [uploadImageUrlResponse, setUploadImageUrlResponse] = useState<
         string | null
     >(null)
+
+    const router = useRouter()
+    const reader = new FileReader()
+    const searchParams = useSearchParams()
+    const [cookies] = useCookies(['token'])
 
     const cardCreateForm = useForm<CardCreateForm>({
         resolver: zodResolver(CardCreateSchema),
@@ -77,6 +78,17 @@ export const CreateCardPage = () => {
             errors: cardCreateForm.formState.errors.etymology,
         },
     ] as const
+
+    const onSubmitCreateCard: SubmitHandler<CardCreateForm> = async (data) => {
+        await createCard(data)
+        if (isNextCreate) {
+            cardCreateForm.reset()
+            setPreviewImage(null)
+            setUploadImageUrlResponse(null)
+            return
+        }
+        router.push(`/pages/cards?deck=${searchParams.get('deck')}`)
+    }
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0]
@@ -147,17 +159,6 @@ export const CreateCardPage = () => {
             console.log(error)
             setIsLoading(false)
         }
-    }
-
-    const onSubmitCreateCard: SubmitHandler<CardCreateForm> = async (data) => {
-        await createCard(data)
-        if (isNextCreate) {
-            cardCreateForm.reset()
-            setPreviewImage(null)
-            setUploadImageUrlResponse(null)
-            return
-        }
-        router.push(`/pages/cards?deck=${searchParams.get('deck')}`)
     }
 
     return (

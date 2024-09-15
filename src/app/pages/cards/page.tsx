@@ -11,10 +11,10 @@ import { useCookies } from 'react-cookie'
 import { BsPlusLg, BsSearch } from 'react-icons/bs'
 
 export const CardsPage = () => {
+    const [cards, setCards] = useState<CardResponse[] | null>(null)
+
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
-
-    const [cards, setCards] = useState<CardResponse[] | null>(null)
     const router = useRouter()
 
     useEffect(() => {

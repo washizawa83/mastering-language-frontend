@@ -53,15 +53,7 @@ const registerUserFormConfigs: {
 ]
 
 export const LoginPage = () => {
-    const loginForm = useForm<LoginFormInput>({
-        resolver: zodResolver(loginSchema),
-    })
-    const loginAndVerifyUserForm = useForm<LoginAndVerifyUserCodeFormInput>({
-        resolver: zodResolver(loginAndVerifyUserSchema),
-    })
-
     const { signin } = useAuthContext()
-
     const [isLoading, setIsLoading] = useState(false)
     const [isInActiveUser, setIsInActiveUser] = useState(false)
     const [cacheLoginInfo, setCacheLoginInfo] = useState<LoginFormInput>({
@@ -70,6 +62,23 @@ export const LoginPage = () => {
     })
 
     const router = useRouter()
+
+    const loginForm = useForm<LoginFormInput>({
+        resolver: zodResolver(loginSchema),
+    })
+    const loginAndVerifyUserForm = useForm<LoginAndVerifyUserCodeFormInput>({
+        resolver: zodResolver(loginAndVerifyUserSchema),
+    })
+
+    const onSubmitToLogin: SubmitHandler<LoginFormInput> = async (data) => {
+        loginUser(data)
+    }
+
+    const onSubmitToLoginAndVerifyUser: SubmitHandler<
+        LoginAndVerifyUserCodeFormInput
+    > = async (data) => {
+        loginAndVerifyUser(data)
+    }
 
     const successUser = (response: LoginResponse) => {
         setIsLoading(false)
@@ -126,16 +135,6 @@ export const LoginPage = () => {
         } catch (error) {
             setIsLoading(false)
         }
-    }
-
-    const onSubmitToLogin: SubmitHandler<LoginFormInput> = async (data) => {
-        loginUser(data)
-    }
-
-    const onSubmitToLoginAndVerifyUser: SubmitHandler<
-        LoginAndVerifyUserCodeFormInput
-    > = async (data) => {
-        loginAndVerifyUser(data)
     }
 
     return (

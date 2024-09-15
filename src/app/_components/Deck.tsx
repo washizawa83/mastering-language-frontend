@@ -37,11 +37,12 @@ const deleteDeckSchema = z.object({
 })
 
 export const Deck = ({ deck }: Props) => {
-    const [deckViewModel, setDeckViewModel] =
-        useState<DeckWithCardCountResponse | null>(deck)
     const [isOpenEditModal, setIsOpenEditModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
-    const [, setIsLoading] = useState(false)
+    const [_, setIsLoading] = useState(false)
+    const [deckViewModel, setDeckViewModel] =
+        useState<DeckWithCardCountResponse | null>(deck)
+
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -49,13 +50,13 @@ export const Deck = ({ deck }: Props) => {
         resolver: zodResolver(createDeckSchema),
     })
 
-    const onSubmitEditDeck: SubmitHandler<CreateDeckForm> = async (data) => {
-        await editDeck(data)
-    }
-
     const deleteDeckForm = useForm<DeleteDeckForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
+
+    const onSubmitEditDeck: SubmitHandler<CreateDeckForm> = async (data) => {
+        await editDeck(data)
+    }
 
     const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
         await deleteDeck()

@@ -30,14 +30,19 @@ export const createDeckSchema = z.object({
 })
 
 export const DeckPage = () => {
-    const [decks, setDecks] = useState<DeckWithCardCountResponse[] | null>(null)
-    const [cookies] = useCookies(['token'])
-    const [isOpenModal, setIsOpenModal] = useState(false)
     const [, setIsLoading] = useState(false)
+    const [isOpenModal, setIsOpenModal] = useState(false)
+    const [decks, setDecks] = useState<DeckWithCardCountResponse[] | null>(null)
+
+    const [cookies] = useCookies(['token'])
 
     const createDeckForm = useForm<CreateDeckForm>({
         resolver: zodResolver(createDeckSchema),
     })
+
+    const onSubmitCreateDeck: SubmitHandler<CreateDeckForm> = async (data) => {
+        await createDeck(data)
+    }
 
     useEffect(() => {
         const fetchDecks = async () => {
@@ -84,10 +89,6 @@ export const DeckPage = () => {
             setIsLoading(false)
             console.log(error)
         }
-    }
-
-    const onSubmitCreateDeck: SubmitHandler<CreateDeckForm> = async (data) => {
-        await createDeck(data)
     }
 
     return (

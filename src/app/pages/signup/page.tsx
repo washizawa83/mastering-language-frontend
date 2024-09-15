@@ -41,7 +41,6 @@ const signUpSchema = z.object({
         .min(1, '名前は必須です')
         .max(10, '名前は10文字以内で入力してください'),
     email: z.string().email('正しいメールアドレスを入力してください'),
-    // password: z.string().min(6, 'パスワードは6文字以上で入力してください'),
     confirmedPassword: z
         .object({
             password: z
@@ -71,19 +70,19 @@ const verifyUserSchema = z.object({
 })
 
 export const SignUpPage = () => {
-    const signUpForm = useForm<SignUpFormInput>({
-        resolver: zodResolver(signUpSchema),
-    })
-    const verifyUserForm = useForm<VerifyUserCodeFormInput>({
-        resolver: zodResolver(verifyUserSchema),
-    })
-
     const [isLoading, setIsLoading] = useState(false)
     const [isRegisterUser, setIsRegisterUser] = useState(false)
     const [isVerifyError, setIsVerifyError] = useState(false)
     const [email, setEmail] = useState<null | string>(null)
 
     const router = useRouter()
+
+    const signUpForm = useForm<SignUpFormInput>({
+        resolver: zodResolver(signUpSchema),
+    })
+    const verifyUserForm = useForm<VerifyUserCodeFormInput>({
+        resolver: zodResolver(verifyUserSchema),
+    })
 
     const registerUserFormConfigs: RegisterUserFormConfigs[] = [
         {
@@ -112,6 +111,16 @@ export const SignUpPage = () => {
                 ?.confirmPassword,
         },
     ]
+
+    const onSubmitToSignUp: SubmitHandler<SignUpFormInput> = async (data) => {
+        registerUser(data)
+    }
+
+    const onSubmitToVerifyUser: SubmitHandler<VerifyUserCodeFormInput> = async (
+        data,
+    ) => {
+        verifyUser(data)
+    }
 
     const registerUser = async (data: SignUpFormInput) => {
         setIsLoading(true)
@@ -160,16 +169,6 @@ export const SignUpPage = () => {
             setIsLoading(false)
             setIsVerifyError(true)
         }
-    }
-
-    const onSubmitToSignUp: SubmitHandler<SignUpFormInput> = async (data) => {
-        registerUser(data)
-    }
-
-    const onSubmitToVerifyUser: SubmitHandler<VerifyUserCodeFormInput> = async (
-        data,
-    ) => {
-        verifyUser(data)
     }
 
     return (

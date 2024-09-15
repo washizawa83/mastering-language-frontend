@@ -28,43 +28,21 @@ const deleteDeckSchema = z.object({
 })
 
 export const Card = ({ card }: Props) => {
-    const [cardViewModel, setCardViewModel] = useState<CardResponse | null>(
-        card,
-    )
     const [isOpen, setIsOpen] = useState(false)
+    const [_, setIsLoading] = useState(false)
     const [isOpenDetailModal, setIsOpenDetailModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
     const [downloadedImage, setDownloadedImage] = useState<string | null>(null)
-    const [, setIsLoading] = useState(false)
+    const [cardViewModel, setCardViewModel] = useState<CardResponse | null>(
+        card,
+    )
+
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
     const deleteDeckForm = useForm<DeleteDeckForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
-
-    const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
-        await deleteCard()
-    }
-
-    const deleteCard = async () => {
-        const token = cookies.token
-        if (!token) return
-
-        setIsLoading(true)
-        try {
-            const urlParams: UrlParams = {
-                endpoint: `card/${card.id}`,
-                token: token,
-            }
-            const response = await apiDelete(urlParams)
-            setCardViewModel(response)
-            setIsLoading(false)
-        } catch (error) {
-            setIsLoading(false)
-            console.log(error)
-        }
-    }
 
     const editMenuItems = [
         {
@@ -79,6 +57,10 @@ export const Card = ({ card }: Props) => {
             handleClick: () => setIsOpenDeleteModal(true),
         },
     ]
+
+    const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
+        await deleteCard()
+    }
 
     useEffect(() => {
         const fetchImage = async () => {
@@ -106,6 +88,25 @@ export const Card = ({ card }: Props) => {
         if (!isOpenDetailModal) return
         fetchImage()
     }, [isOpenDetailModal])
+
+    const deleteCard = async () => {
+        const token = cookies.token
+        if (!token) return
+
+        setIsLoading(true)
+        try {
+            const urlParams: UrlParams = {
+                endpoint: `card/${card.id}`,
+                token: token,
+            }
+            const response = await apiDelete(urlParams)
+            setCardViewModel(response)
+            setIsLoading(false)
+        } catch (error) {
+            setIsLoading(false)
+            console.log(error)
+        }
+    }
 
     if (!cardViewModel) return
     return (
