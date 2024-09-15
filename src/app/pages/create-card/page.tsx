@@ -84,6 +84,7 @@ export const CreateCardPage = () => {
         const token = cookies.token
         if (!file || !deckId || !token) return
 
+        setIsLoading(true)
         try {
             const requestBody = {
                 upload_image: file,
@@ -94,6 +95,7 @@ export const CreateCardPage = () => {
                 token,
             )
 
+            setIsLoading(false)
             if (response) {
                 reader.readAsDataURL(file)
                 reader.onload = () => {
@@ -106,6 +108,7 @@ export const CreateCardPage = () => {
             }
         } catch (error) {
             console.log(error)
+            setIsLoading(false)
         }
     }, [])
 
