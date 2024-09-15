@@ -2,6 +2,8 @@
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { BaseTextArea } from '@/app/_forms/BaseTextArea'
+import { UploadImageForm } from '@/app/_forms/UploadImageForm'
+import { UploadImagePreviewForm } from '@/app/_forms/UploadImagePreviewForm'
 import { BasePage } from '@/app/_layouts/BasePage'
 import { apiPost, apiPostForFile, UpdateUrlParams } from '@/app/_service/api'
 import { CardCreateRequest } from '@/app/_types/cards'
@@ -11,8 +13,6 @@ import { useCallback, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useDropzone } from 'react-dropzone'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { IconContext } from 'react-icons'
-import { RiCloseLargeFill, RiImageAddLine } from 'react-icons/ri'
 import { z } from 'zod'
 
 type ImageData = {
@@ -78,6 +78,11 @@ export const CreateCardPage = () => {
             errors: cardCreateForm.formState.errors.etymology,
         },
     ] as const
+
+    const handleDeletePreviewImage = () => {
+        setPreviewImage(null)
+        setUploadImageUrlResponse(null)
+    }
 
     const onSubmitCreateCard: SubmitHandler<CardCreateForm> = async (data) => {
         await createCard(data)
@@ -197,54 +202,15 @@ export const CreateCardPage = () => {
                     <div className="p-2 mb-10">
                         <h1 className="mb-3 text-lg">画像アップロード</h1>
                         {previewImage ? (
-                            <div className="flex border border-flowerBlue p-2">
-                                <img
-                                    className="object-contain md:h-36 md:w-48 h-16 w-28 rounded-lg"
-                                    src={previewImage.path}
-                                    alt=""
-                                />
-                                <p className="grow mr-10 p-2">
-                                    {previewImage.name}
-                                </p>
-                                <div className="flex justify-center items-center">
-                                    <button
-                                        onClick={() => setPreviewImage(null)}
-                                        className="bg-deep-light dark:bg-deep-dark p-2 rounded-lg"
-                                    >
-                                        <IconContext.Provider
-                                            value={{ size: '30px' }}
-                                        >
-                                            <RiCloseLargeFill />
-                                        </IconContext.Provider>
-                                    </button>
-                                </div>
-                            </div>
+                            <UploadImagePreviewForm
+                                previewImage={previewImage}
+                                onClickDelete={handleDeletePreviewImage}
+                            />
                         ) : (
-                            <div className="flex justify-center w-full">
-                                <div className="flex grow justify-center">
-                                    <div
-                                        className="w-full border-dashed border border-flowerBlue flex justify-center p-5 mb-2 cursor-pointer"
-                                        {...getRootProps()}
-                                    >
-                                        <input
-                                            {...getInputProps()}
-                                            accept=".jpg, .jpeg, .png, .bmp"
-                                        />
-                                        <div className="container flex justify-center text-xs">
-                                            <div className="flex flex-col items-center justify-center opacity-70">
-                                                <IconContext.Provider
-                                                    value={{ size: '30px' }}
-                                                >
-                                                    <RiImageAddLine />
-                                                </IconContext.Provider>
-                                                <p className="text-sm mt-5">
-                                                    画像を選択またはドラッグ&ドロップ
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <UploadImageForm
+                                getRootProps={getRootProps}
+                                getInputProps={getInputProps}
+                            />
                         )}
                     </div>
                     <div className="flex justify-around items-center">
