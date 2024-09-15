@@ -72,9 +72,7 @@ export const DeckPage = () => {
                 token,
             )
             if (response) {
-                decks
-                    ? setDecks([...decks, response.data])
-                    : setDecks([response.data])
+                decks ? setDecks([...decks, response]) : setDecks([response])
             }
             setIsLoading(false)
         } catch (error) {

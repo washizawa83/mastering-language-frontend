@@ -104,7 +104,7 @@ export const CreateCardPage = () => {
                         name: file.name,
                     })
                 }
-                setUploadImageUrlResponse(response.data)
+                setUploadImageUrlResponse(response)
             }
         } catch (error) {
             console.log(error)

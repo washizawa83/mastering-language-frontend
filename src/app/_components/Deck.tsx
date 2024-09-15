@@ -83,7 +83,7 @@ export const Deck = ({ deck }: Props) => {
                 token,
             )
             if (response) {
-                setDeckViewModel(response.data)
+                setDeckViewModel(response)
             }
             setIsLoading(false)
         } catch (error) {
@@ -102,7 +102,7 @@ export const Deck = ({ deck }: Props) => {
                 token,
             )
             if (response) {
-                setDeckViewModel(response.data)
+                setDeckViewModel(response)
             }
             setIsLoading(false)
         } catch (error) {

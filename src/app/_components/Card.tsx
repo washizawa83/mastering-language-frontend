@@ -2,7 +2,7 @@ import { BaseModal } from '@/app/_components/BaseModal'
 import { MenuButton } from '@/app/_components/MenuButton'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
-import { apiDelete, apiGetV2 } from '@/app/_service/api'
+import { apiDelete, apiGet } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -58,7 +58,7 @@ export const Card = ({ card }: Props) => {
                 token,
             )
             if (response) {
-                setCardViewModel(response.data)
+                setCardViewModel(response)
             }
             setIsLoading(false)
         } catch (error) {
@@ -90,7 +90,7 @@ export const Card = ({ card }: Props) => {
 
             setIsLoading(true)
             try {
-                const response = await apiGetV2(
+                const response = await apiGet(
                     `http://127.0.0.1:8000/download-card-image/${card.id}`,
                     token,
                 )
