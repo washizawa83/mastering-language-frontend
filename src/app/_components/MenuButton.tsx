@@ -16,7 +16,7 @@ type Props = {
 
 export const MenuButton = ({ label, items, position = 'right' }: Props) => {
     const [isOpen, setIsOpen] = useState(false)
-    const menuRef = useRef(null)
+    const menuRef = useRef<null | any>(null)
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

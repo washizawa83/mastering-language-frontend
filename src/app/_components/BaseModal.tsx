@@ -11,6 +11,12 @@ type Props = {
     setIsOpen: (state: boolean) => void
 }
 
+type TailWindColors = {
+    deep: { dark: string; light: string }
+    shallow: { dark: string; light: string }
+    typography: { dark: string; light: string }
+}
+
 export const BaseModal = ({
     title,
     isOpen,
@@ -40,12 +46,16 @@ export const BaseModal = ({
                     sx={{
                         bgcolor:
                             theme === 'dark'
-                                ? config.theme?.colors?.deep?.dark
-                                : config.theme?.colors?.deep?.light,
+                                ? (config.theme?.colors as TailWindColors).deep
+                                      .dark
+                                : (config.theme?.colors as TailWindColors).deep
+                                      .light,
                         color:
                             theme === 'dark'
-                                ? config.theme?.colors?.typography.dark
-                                : config.theme?.colors?.typography.light,
+                                ? (config.theme?.colors as TailWindColors)
+                                      .typography.dark
+                                : (config.theme?.colors as TailWindColors)
+                                      .typography.light,
                         maxWidth: maxWidth,
                         width: '80vw',
                     }}
@@ -57,12 +67,16 @@ export const BaseModal = ({
                 sx={{
                     bgcolor:
                         theme === 'dark'
-                            ? config.theme?.colors.shallow.dark
-                            : config.theme?.colors?.shallow?.light,
+                            ? (config.theme?.colors as TailWindColors).shallow
+                                  .dark
+                            : (config.theme?.colors as TailWindColors).shallow
+                                  ?.light,
                     color:
                         theme === 'dark'
-                            ? config.theme?.colors?.typography.dark
-                            : config.theme?.colors?.typography.light,
+                            ? (config.theme?.colors as TailWindColors)
+                                  .typography.dark
+                            : (config.theme?.colors as TailWindColors)
+                                  .typography.light,
                     maxWidth: maxWidth,
                     width: '80vw',
                 }}
