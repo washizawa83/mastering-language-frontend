@@ -140,6 +140,7 @@ export const SignUpPage = () => {
 
     const verifyUser = async (data: VerifyUserCodeFormInput) => {
         if (email === null) return
+
         setIsLoading(true)
         try {
             const requestBody: VerifyUserRequest = {

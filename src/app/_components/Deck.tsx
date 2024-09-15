@@ -75,10 +75,11 @@ export const Deck = ({ deck }: Props) => {
     ]
 
     const editDeck = async (data: CreateDeckForm) => {
+        const token = cookies.token
+        if (!token) return
+
         setIsLoading(true)
         try {
-            const token = cookies.token
-            if (!token) return
             const requestBody: DeckCreateRequest = {
                 name: data.name,
             }
@@ -99,10 +100,11 @@ export const Deck = ({ deck }: Props) => {
     }
 
     const deleteDeck = async () => {
+        const token = cookies.token
+        if (!token) return
+
         setIsLoading(true)
         try {
-            const token = cookies.token
-            if (!token) return
             const urlParams: UrlParams = {
                 endpoint: `deck/${deck.id}`,
                 token: token,

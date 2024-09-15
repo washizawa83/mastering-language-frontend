@@ -81,8 +81,6 @@ export const Card = ({ card }: Props) => {
     ]
 
     useEffect(() => {
-        if (!isOpenDetailModal) return
-
         const fetchImage = async () => {
             const token = cookies.token
             if (!token) return
@@ -105,6 +103,7 @@ export const Card = ({ card }: Props) => {
             }
         }
 
+        if (!isOpenDetailModal) return
         fetchImage()
     }, [isOpenDetailModal])
 

@@ -59,9 +59,11 @@ export const AuthProvider = ({ children }: Props) => {
 
     useEffect(() => {
         const verify = async () => {
+            const token = cookies.token
+            if (!token) return
+
             try {
                 setIsLoading(true)
-                const token = cookies.token
                 const verifyUrlParams: UrlParams = {
                     endpoint: 'verify',
                     token: token,

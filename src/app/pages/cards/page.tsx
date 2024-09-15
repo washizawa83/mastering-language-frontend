@@ -13,21 +13,22 @@ import { BsPlusLg, BsSearch } from 'react-icons/bs'
 export const CardsPage = () => {
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
+
     const [cards, setCards] = useState<CardResponse[] | null>(null)
     const router = useRouter()
 
     useEffect(() => {
         const fetchCards = async () => {
+            const token = cookies.token
+            const deckId = searchParams.get('deck')
+            if (!token || !deckId) return
+
             try {
-                const token = cookies.token
-                if (!token) return
-                const deckId = searchParams.get('deck')
                 const urlParams: UrlParams = {
                     endpoint: `cards/${deckId}`,
                     token: token,
                 }
                 const cards = await apiGet(urlParams)
-
                 setCards(camelcaseKeys(cards))
             } catch (error) {
                 console.log(error)
