@@ -5,6 +5,7 @@ import { BaseInput } from '@/app/_forms/BaseInput'
 import { apiDelete, apiGetV2 } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -32,21 +33,21 @@ export const Card = ({ card }: Props) => {
     )
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenDetailModal, setIsOpenDetailModal] = useState(false)
-    const [isOpenEditModal, setIsOpenEditModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
     const [downloadedImage, setDownloadedImage] = useState<string | null>(null)
     const [, setIsLoading] = useState(false)
     const [cookies] = useCookies(['token'])
+    const router = useRouter()
 
     const deleteDeckForm = useForm<DeleteDeckForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
 
     const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
-        await deleteDeck()
+        await deleteCard()
     }
 
-    const deleteDeck = async () => {
+    const deleteCard = async () => {
         const token = cookies.token
         if (!token) return
 
@@ -70,7 +71,8 @@ export const Card = ({ card }: Props) => {
         {
             label: '編集',
             icon: <MdEdit />,
-            handleClick: () => setIsOpenEditModal(true),
+            handleClick: () =>
+                router.push(`/pages/update-card?card=${card.id}`),
         },
         {
             label: '削除',
