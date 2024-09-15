@@ -170,7 +170,7 @@ export const SignUpPage = () => {
     }
 
     return (
-        <BaseAuthForm title="サインアップ">
+        <BaseAuthForm title="Sign Up">
             <form
                 onSubmit={
                     isRegisterUser
@@ -250,9 +250,9 @@ export const SignUpPage = () => {
             <div className="flex justify-center">
                 <Link
                     href="/pages/login"
-                    className="flex items-center p-2 tracking-wider text-nav text-sm"
+                    className="flex items-center p-2 tracking-wider text-nav"
                 >
-                    ユーザー登録済みの方はこちら
+                    Click here to login as user
                 </Link>
             </div>
         </BaseAuthForm>

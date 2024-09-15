@@ -12,6 +12,9 @@ const config: Config = {
                 background: 'var(--background)',
                 foreground: 'var(--foreground)',
             },
+            spacing: {
+                '128': '65rem',
+            },
         },
         colors: {
             shallow: {
