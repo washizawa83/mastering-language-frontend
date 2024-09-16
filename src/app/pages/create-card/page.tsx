@@ -50,7 +50,7 @@ export const CreateCardPage = () => {
     const reader = new FileReader()
     const searchParams = useSearchParams()
     const [cookies] = useCookies(['token'])
-    const { setIsLoading } = useLayoutContext()
+    const { setIsLoading, setSnackbarParam } = useLayoutContext()
 
     const cardCreateForm = useForm<CardCreateForm>({
         resolver: zodResolver(CardCreateSchema),
@@ -156,8 +156,17 @@ export const CreateCardPage = () => {
                 token: token,
             }
             const response = await apiPost(urlParams)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'カードを作成しました',
+                type: 'success',
+            })
         } catch (error) {
-            console.log(error)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'カードの作成に失敗しました',
+                type: 'error',
+            })
         }
         setIsLoading(false)
     }

@@ -43,7 +43,7 @@ export const Deck = ({ deck }: Props) => {
     const [deckViewModel, setDeckViewModel] =
         useState<DeckWithCardCountResponse | null>(deck)
 
-    const { setIsLoading } = useLayoutContext()
+    const { setIsLoading, setSnackbarParam } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -93,9 +93,18 @@ export const Deck = ({ deck }: Props) => {
             const response = await apiPut(urlParams)
             if (response) {
                 setDeckViewModel(response)
+                setSnackbarParam({
+                    isVisible: true,
+                    message: 'デッキを編集しました',
+                    type: 'success',
+                })
             }
         } catch (error) {
-            console.log(error)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'デッキの編集に失敗しました',
+                type: 'error',
+            })
         }
         setIsLoading(false)
     }
@@ -112,8 +121,17 @@ export const Deck = ({ deck }: Props) => {
             }
             const response = await apiDelete(urlParams)
             setDeckViewModel(response)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'デッキを削除しました',
+                type: 'info',
+            })
         } catch (error) {
-            console.log(error)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'デッキの削除に失敗しました',
+                type: 'error',
+            })
         }
         setIsLoading(false)
     }

@@ -37,7 +37,7 @@ export const Card = ({ card }: Props) => {
         card,
     )
 
-    const { setIsLoading } = useLayoutContext()
+    const { setIsLoading, setSnackbarParam } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -81,7 +81,11 @@ export const Card = ({ card }: Props) => {
                     setDownloadedImage(src)
                 }
             } catch (error) {
-                console.log(error)
+                setSnackbarParam({
+                    isVisible: true,
+                    message: '画像の取得に失敗しました',
+                    type: 'error',
+                })
             }
             setIsLoading(false)
         }
@@ -102,8 +106,17 @@ export const Card = ({ card }: Props) => {
             }
             const response = await apiDelete(urlParams)
             setCardViewModel(response)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'カードを削除しました',
+                type: 'success',
+            })
         } catch (error) {
-            console.log(error)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'カードの削除に失敗しました',
+                type: 'info',
+            })
         }
         setIsLoading(false)
     }

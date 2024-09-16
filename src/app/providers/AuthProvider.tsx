@@ -62,8 +62,8 @@ export const AuthProvider = ({ children }: Props) => {
             const token = cookies.token
             if (!token) return
 
+            setIsLoading(true)
             try {
-                setIsLoading(true)
                 const verifyUrlParams: UrlParams = {
                     endpoint: 'verify',
                     token: token,
@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }: Props) => {
                 const user = await apiGet(userUrlParams)
                 signin(token)
                 setUserInfo(user)
-                setIsLoading(false)
             } catch (error) {
                 if (
                     axios.isAxiosError(error) &&
@@ -87,9 +86,9 @@ export const AuthProvider = ({ children }: Props) => {
                     setIsLoading(false)
                     return <Navigate to="/pages/signin" />
                 }
-                setIsLoading(false)
                 signout()
             }
+            setIsLoading(false)
         }
 
         verify()
