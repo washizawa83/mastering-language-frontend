@@ -16,7 +16,7 @@ import { useDropzone } from 'react-dropzone'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-type ImageData = {
+export type ImageData = {
     path: string
     name: string
 }
