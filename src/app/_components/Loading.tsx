@@ -9,25 +9,22 @@ interface LoadingProps {
 export const LoadingComponent: React.FC<LoadingProps> = ({
     height = '100vh',
 }) => {
-    // const { isLoading } = useAuthContext()
     const { isLoading } = useLayoutContext()
     return (
-        isLoading && (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height={height}
-                position="absolute"
-                top={0}
-                left={0}
-                right={0}
-                bottom={0}
-                bgcolor="rgba(0, 0, 0, 0.9)"
-                zIndex={9999}
-            >
-                <CircularProgress />
-            </Box>
-        )
+        <Box
+            display={isLoading ? 'flex' : 'none'}
+            justifyContent="center"
+            alignItems="center"
+            height={height}
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            bgcolor="rgba(0, 0, 0, 0.9)"
+            zIndex={9999}
+        >
+            <CircularProgress />
+        </Box>
     )
 }

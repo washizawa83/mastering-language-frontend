@@ -1,21 +1,16 @@
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
+import Alert from '@mui/material/Alert'
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar'
 import * as React from 'react'
 
-type Props = {
-    message: string
-    autoHideDuration?: number
-    isOpen: boolean
-}
+export default function AutoHideSnackbar() {
+    const { snackbarParam, setSnackbarParam } = useLayoutContext()
 
-export default function AutohideSnackbar({
-    message,
-    autoHideDuration = 5000,
-    isOpen,
-}: Props) {
     const handleClose = (
         event: React.SyntheticEvent | Event,
         reason?: SnackbarCloseReason,
     ) => {
+        setSnackbarParam(null)
         if (reason === 'clickaway') {
             return
         }
@@ -24,11 +19,16 @@ export default function AutohideSnackbar({
     return (
         <div>
             <Snackbar
-                open={isOpen}
-                autoHideDuration={autoHideDuration}
+                open={snackbarParam?.isVisible}
+                autoHideDuration={
+                    snackbarParam?.duration ? snackbarParam?.duration : 5000
+                }
                 onClose={handleClose}
-                message={message}
-            />
+            >
+                <Alert severity={snackbarParam?.type}>
+                    {snackbarParam?.message}
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

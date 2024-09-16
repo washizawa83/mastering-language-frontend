@@ -15,6 +15,7 @@ import {
     LoginResponse,
 } from '@/app/_types/auth'
 import { useAuthContext } from '@/app/providers/AuthProvider'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -54,6 +55,7 @@ const registerUserFormConfigs: {
 
 export const LoginPage = () => {
     const { signin } = useAuthContext()
+    const { setSnackbarParam } = useLayoutContext()
     const [isLoading, setIsLoading] = useState(false)
     const [isInActiveUser, setIsInActiveUser] = useState(false)
     const [cacheLoginInfo, setCacheLoginInfo] = useState<LoginFormInput>({
@@ -100,6 +102,11 @@ export const LoginPage = () => {
             const response: LoginResponse = await apiPost(urlParams)
             if (response) {
                 successUser(response)
+                setSnackbarParam({
+                    isVisible: true,
+                    message: 'ログインしました',
+                    type: 'success',
+                })
             }
         } catch (error) {
             setIsLoading(false)
@@ -110,6 +117,12 @@ export const LoginPage = () => {
             ) {
                 setIsInActiveUser(true)
                 setCacheLoginInfo(data)
+            } else {
+                setSnackbarParam({
+                    isVisible: true,
+                    message: 'ログインに失敗しました',
+                    type: 'error',
+                })
             }
         }
     }
@@ -131,9 +144,19 @@ export const LoginPage = () => {
             const response: LoginResponse = await apiPost(urlParams)
             if (response) {
                 successUser(response)
+                setSnackbarParam({
+                    isVisible: true,
+                    message: '認証・ログイン完了しました',
+                    type: 'success',
+                })
             }
         } catch (error) {
             setIsLoading(false)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'ログインまたは認証に失敗しました',
+                type: 'error',
+            })
         }
     }
 

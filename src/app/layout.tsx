@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import { LoadingComponent } from '@/app/_components/Loading'
+import AutoHideSnackbar from '@/app/_components/Snackbar'
 import { Footer } from '@/app/_layouts/Footer'
 import { Header } from '@/app/_layouts/Header'
 import { AuthProvider } from '@/app/providers/AuthProvider'
@@ -51,6 +52,7 @@ export default function RootLayout({
                             <AuthProvider>
                                 <Header />
                                 <LoadingComponent />
+                                <AutoHideSnackbar />
                                 {children}
                                 <Footer />
                             </AuthProvider>

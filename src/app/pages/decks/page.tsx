@@ -35,7 +35,7 @@ export const DeckPage = () => {
     const [decks, setDecks] = useState<DeckWithCardCountResponse[] | null>(null)
 
     const [cookies] = useCookies(['token'])
-    const { setIsLoading } = useLayoutContext()
+    const { setIsLoading, setSnackbarParam } = useLayoutContext()
 
     const createDeckForm = useForm<CreateDeckForm>({
         resolver: zodResolver(createDeckSchema),
@@ -86,9 +86,18 @@ export const DeckPage = () => {
             const response = await apiPost(urlParams)
             if (response) {
                 decks ? setDecks([...decks, response]) : setDecks([response])
+                setSnackbarParam({
+                    isVisible: true,
+                    message: 'デッキを作成しました',
+                    type: 'success',
+                })
             }
         } catch (error) {
-            console.log(error)
+            setSnackbarParam({
+                isVisible: true,
+                message: 'デッキの作成に失敗しました',
+                type: 'error',
+            })
         }
         setIsLoading(false)
     }

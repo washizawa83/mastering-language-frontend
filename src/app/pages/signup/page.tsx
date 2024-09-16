@@ -11,6 +11,7 @@ import { LoadingButton } from '@/app/_forms/LoadingButton'
 import { PasswordInput } from '@/app/_forms/PasswordInput'
 import { apiPost, UpdateUrlParams } from '@/app/_service/api'
 import { SignUpRequest, VerifyUserRequest } from '@/app/_types/auth'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -75,6 +76,7 @@ export const SignUpPage = () => {
     const [isVerifyError, setIsVerifyError] = useState(false)
     const [email, setEmail] = useState<null | string>(null)
 
+    const { setSnackbarParam } = useLayoutContext()
     const router = useRouter()
 
     const signUpForm = useForm<SignUpFormInput>({
@@ -163,6 +165,11 @@ export const SignUpPage = () => {
             const response = await apiPost(urlParams)
             setIsLoading(false)
             if (response) {
+                setSnackbarParam({
+                    isVisible: true,
+                    message: 'ユーザー登録が完了しました。ログインしてください',
+                    type: 'success',
+                })
                 router.push('/pages/login')
             }
         } catch (error) {
