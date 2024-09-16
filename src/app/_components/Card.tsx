@@ -18,7 +18,7 @@ import { z } from 'zod'
 type Props = {
     card: CardResponse
 }
-interface DeleteDeckForm {
+interface DeleteCardForm {
     delete: string
 }
 
@@ -41,7 +41,7 @@ export const Card = ({ card }: Props) => {
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
-    const deleteDeckForm = useForm<DeleteDeckForm>({
+    const deleteCardForm = useForm<DeleteCardForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
 
@@ -59,7 +59,7 @@ export const Card = ({ card }: Props) => {
         },
     ]
 
-    const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
+    const onSubmitDeleteDeck: SubmitHandler<DeleteCardForm> = async () => {
         await deleteCard()
     }
 
@@ -182,22 +182,19 @@ export const Card = ({ card }: Props) => {
                 setIsOpen={setIsOpenDeleteModal}
             >
                 <form
-                    onSubmit={deleteDeckForm.handleSubmit(onSubmitDeleteDeck)}
+                    onSubmit={deleteCardForm.handleSubmit(onSubmitDeleteDeck)}
                 >
                     <div className="mb-5">
                         <h3 className="mb-2">
-                            デッキを削除する場合、<b>削除</b>
+                            カードを削除する場合、<b>削除</b>
                             と入力してください
                         </h3>
-                        <p className="text-sm">
-                            デッキを削除すると、デッキに含まれるカードも全て削除されます
-                        </p>
                         <BaseInput
                             label=""
                             id="delete"
                             type="text"
-                            register={deleteDeckForm.register('delete')}
-                            error={deleteDeckForm.formState.errors.delete}
+                            register={deleteCardForm.register('delete')}
+                            error={deleteCardForm.formState.errors.delete}
                             placeholder="削除"
                         />
                     </div>
