@@ -49,8 +49,7 @@ export const Card = ({ card }: Props) => {
         {
             label: '編集',
             icon: <MdEdit />,
-            handleClick: () =>
-                router.push(`/pages/update-card?card=${card.id}`),
+            handleClick: () => router.push(`/pages/edit-card?card=${card.id}`),
         },
         {
             label: '削除',
