@@ -2,8 +2,9 @@ import { BaseModal } from '@/app/_components/BaseModal'
 import { MenuButton } from '@/app/_components/MenuButton'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
-import { apiDelete, apiGetV2 } from '@/app/_service/api'
+import { apiDelete, apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ import { z } from 'zod'
 type Props = {
     card: CardResponse
 }
-interface DeleteDeckForm {
+interface DeleteCardForm {
     delete: string
 }
 
@@ -28,44 +29,21 @@ const deleteDeckSchema = z.object({
 })
 
 export const Card = ({ card }: Props) => {
-    const [cardViewModel, setCardViewModel] = useState<CardResponse | null>(
-        card,
-    )
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenDetailModal, setIsOpenDetailModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
     const [downloadedImage, setDownloadedImage] = useState<string | null>(null)
-    const [, setIsLoading] = useState(false)
+    const [cardViewModel, setCardViewModel] = useState<CardResponse | null>(
+        card,
+    )
+
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
-    const deleteDeckForm = useForm<DeleteDeckForm>({
+    const deleteCardForm = useForm<DeleteCardForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
-
-    const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
-        await deleteCard()
-    }
-
-    const deleteCard = async () => {
-        const token = cookies.token
-        if (!token) return
-
-        setIsLoading(true)
-        try {
-            const response = await apiDelete(
-                `http://127.0.0.1:8000/card/${card.id}`,
-                token,
-            )
-            if (response) {
-                setCardViewModel(response.data)
-            }
-            setIsLoading(false)
-        } catch (error) {
-            setIsLoading(false)
-            console.log(error)
-        }
-    }
 
     const editMenuItems = [
         {
@@ -81,32 +59,54 @@ export const Card = ({ card }: Props) => {
         },
     ]
 
-    useEffect(() => {
-        if (!isOpenDetailModal) return
+    const onSubmitDeleteDeck: SubmitHandler<DeleteCardForm> = async () => {
+        await deleteCard()
+    }
 
+    useEffect(() => {
         const fetchImage = async () => {
             const token = cookies.token
-            if (!token) return
+            const imagePath = card.imagePath
+            if (!token || !imagePath) return
 
             setIsLoading(true)
             try {
-                const response = await apiGetV2(
-                    `http://127.0.0.1:8000/download-card-image/${card.id}`,
-                    token,
-                )
-                setIsLoading(false)
+                const urlParams: UrlParams = {
+                    endpoint: `download-card-image/${card.id}`,
+                    token: token,
+                }
+                const response = await apiGet(urlParams)
                 if (response) {
                     const src = `data:image/png;base64,${response}`
                     setDownloadedImage(src)
                 }
             } catch (error) {
                 console.log(error)
-                setIsLoading(false)
             }
+            setIsLoading(false)
         }
 
+        if (!isOpenDetailModal) return
         fetchImage()
     }, [isOpenDetailModal])
+
+    const deleteCard = async () => {
+        const token = cookies.token
+        if (!token) return
+
+        setIsLoading(true)
+        try {
+            const urlParams: UrlParams = {
+                endpoint: `card/${card.id}`,
+                token: token,
+            }
+            const response = await apiDelete(urlParams)
+            setCardViewModel(response)
+        } catch (error) {
+            console.log(error)
+        }
+        setIsLoading(false)
+    }
 
     if (!cardViewModel) return
     return (
@@ -183,22 +183,19 @@ export const Card = ({ card }: Props) => {
                 setIsOpen={setIsOpenDeleteModal}
             >
                 <form
-                    onSubmit={deleteDeckForm.handleSubmit(onSubmitDeleteDeck)}
+                    onSubmit={deleteCardForm.handleSubmit(onSubmitDeleteDeck)}
                 >
                     <div className="mb-5">
                         <h3 className="mb-2">
-                            デッキを削除する場合、<b>削除</b>
+                            カードを削除する場合、<b>削除</b>
                             と入力してください
                         </h3>
-                        <p className="text-sm">
-                            デッキを削除すると、デッキに含まれるカードも全て削除されます
-                        </p>
                         <BaseInput
                             label=""
                             id="delete"
                             type="text"
-                            register={deleteDeckForm.register('delete')}
-                            error={deleteDeckForm.formState.errors.delete}
+                            register={deleteCardForm.register('delete')}
+                            error={deleteCardForm.formState.errors.delete}
                             placeholder="削除"
                         />
                     </div>

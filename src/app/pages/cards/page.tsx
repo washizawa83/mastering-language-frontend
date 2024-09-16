@@ -2,8 +2,9 @@
 import { Button } from '@/app/_components/Button'
 import { Card } from '@/app/_components/Card'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiGet } from '@/app/_service/api'
+import { apiGet, UrlParams } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import camelcaseKeys from 'camelcase-keys'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -11,26 +12,31 @@ import { useCookies } from 'react-cookie'
 import { BsPlusLg, BsSearch } from 'react-icons/bs'
 
 export const CardsPage = () => {
+    const [cards, setCards] = useState<CardResponse[] | null>(null)
+
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
-    const [cards, setCards] = useState<CardResponse[] | null>(null)
     const router = useRouter()
 
     useEffect(() => {
         const fetchCards = async () => {
-            try {
-                const token = cookies.token
-                if (!token) return
-                const deckId = searchParams.get('deck')
-                const cards = await apiGet(
-                    `http://127.0.0.1:8000/cards/${deckId}`,
-                    token,
-                )
+            const token = cookies.token
+            const deckId = searchParams.get('deck')
+            if (!token || !deckId) return
 
+            setIsLoading(true)
+            try {
+                const urlParams: UrlParams = {
+                    endpoint: `cards/${deckId}`,
+                    token: token,
+                }
+                const cards = await apiGet(urlParams)
                 setCards(camelcaseKeys(cards))
             } catch (error) {
                 console.log(error)
             }
+            setIsLoading(false)
         }
 
         fetchCards()

@@ -9,7 +9,7 @@ import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { LoadingButton } from '@/app/_forms/LoadingButton'
 import { PasswordInput } from '@/app/_forms/PasswordInput'
-import { apiPost } from '@/app/_service/api'
+import { apiPost, UpdateUrlParams } from '@/app/_service/api'
 import { SignUpRequest, VerifyUserRequest } from '@/app/_types/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -41,7 +41,6 @@ const signUpSchema = z.object({
         .min(1, '名前は必須です')
         .max(10, '名前は10文字以内で入力してください'),
     email: z.string().email('正しいメールアドレスを入力してください'),
-    // password: z.string().min(6, 'パスワードは6文字以上で入力してください'),
     confirmedPassword: z
         .object({
             password: z
@@ -71,19 +70,19 @@ const verifyUserSchema = z.object({
 })
 
 export const SignUpPage = () => {
-    const signUpForm = useForm<SignUpFormInput>({
-        resolver: zodResolver(signUpSchema),
-    })
-    const verifyUserForm = useForm<VerifyUserCodeFormInput>({
-        resolver: zodResolver(verifyUserSchema),
-    })
-
     const [isLoading, setIsLoading] = useState(false)
     const [isRegisterUser, setIsRegisterUser] = useState(false)
     const [isVerifyError, setIsVerifyError] = useState(false)
     const [email, setEmail] = useState<null | string>(null)
 
     const router = useRouter()
+
+    const signUpForm = useForm<SignUpFormInput>({
+        resolver: zodResolver(signUpSchema),
+    })
+    const verifyUserForm = useForm<VerifyUserCodeFormInput>({
+        resolver: zodResolver(verifyUserSchema),
+    })
 
     const registerUserFormConfigs: RegisterUserFormConfigs[] = [
         {
@@ -113,6 +112,16 @@ export const SignUpPage = () => {
         },
     ]
 
+    const onSubmitToSignUp: SubmitHandler<SignUpFormInput> = async (data) => {
+        registerUser(data)
+    }
+
+    const onSubmitToVerifyUser: SubmitHandler<VerifyUserCodeFormInput> = async (
+        data,
+    ) => {
+        verifyUser(data)
+    }
+
     const registerUser = async (data: SignUpFormInput) => {
         setIsLoading(true)
         try {
@@ -122,10 +131,11 @@ export const SignUpPage = () => {
                 email: data.email,
                 password: data.confirmedPassword.password,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/signup',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'signup',
+                body: requestBody,
+            }
+            const response = await apiPost(urlParams)
             setIsLoading(false)
             if (response) {
                 setEmail(data.email)
@@ -139,16 +149,18 @@ export const SignUpPage = () => {
 
     const verifyUser = async (data: VerifyUserCodeFormInput) => {
         if (email === null) return
+
         setIsLoading(true)
         try {
             const requestBody: VerifyUserRequest = {
                 email: email,
                 verification_code: data.verificationCode,
             }
-            const response = await apiPost(
-                'http://127.0.0.1:8000/signup-verify',
-                requestBody,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: 'signup-verify',
+                body: requestBody,
+            }
+            const response = await apiPost(urlParams)
             setIsLoading(false)
             if (response) {
                 router.push('/pages/login')
@@ -157,16 +169,6 @@ export const SignUpPage = () => {
             setIsLoading(false)
             setIsVerifyError(true)
         }
-    }
-
-    const onSubmitToSignUp: SubmitHandler<SignUpFormInput> = async (data) => {
-        registerUser(data)
-    }
-
-    const onSubmitToVerifyUser: SubmitHandler<VerifyUserCodeFormInput> = async (
-        data,
-    ) => {
-        verifyUser(data)
     }
 
     return (

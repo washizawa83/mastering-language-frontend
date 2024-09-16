@@ -5,6 +5,7 @@ import { LoadingComponent } from '@/app/_components/Loading'
 import { Footer } from '@/app/_layouts/Footer'
 import { Header } from '@/app/_layouts/Header'
 import { AuthProvider } from '@/app/providers/AuthProvider'
+import { LayoutProvider } from '@/app/providers/LayoutProvider'
 import { CookiesProvider } from 'react-cookie'
 import './globals.css'
 
@@ -46,12 +47,14 @@ export default function RootLayout({
             <body className="tracking-wider bg-medium-light dark:bg-medium-dark">
                 <ThemeContext.Provider value={{ theme, toggleTheme }}>
                     <CookiesProvider>
-                        <AuthProvider>
-                            <Header />
-                            <LoadingComponent />
-                            {children}
-                            <Footer />
-                        </AuthProvider>
+                        <LayoutProvider>
+                            <AuthProvider>
+                                <Header />
+                                <LoadingComponent />
+                                {children}
+                                <Footer />
+                            </AuthProvider>
+                        </LayoutProvider>
                     </CookiesProvider>
                 </ThemeContext.Provider>
             </body>

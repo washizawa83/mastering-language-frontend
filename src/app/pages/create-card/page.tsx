@@ -2,17 +2,18 @@
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
 import { BaseTextArea } from '@/app/_forms/BaseTextArea'
+import { UploadImageForm } from '@/app/_forms/UploadImageForm'
+import { UploadImagePreviewForm } from '@/app/_forms/UploadImagePreviewForm'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiPost, apiPostForFile } from '@/app/_service/api'
+import { apiPost, apiPostForFile, UpdateUrlParams } from '@/app/_service/api'
 import { CardCreateRequest } from '@/app/_types/cards'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useDropzone } from 'react-dropzone'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { IconContext } from 'react-icons'
-import { RiCloseLargeFill, RiImageAddLine } from 'react-icons/ri'
 import { z } from 'zod'
 
 type ImageData = {
@@ -39,16 +40,17 @@ const CardCreateSchema = z.object({
 })
 
 export const CreateCardPage = () => {
-    const [, setIsLoading] = useState(false)
     const [isNextCreate, setIsNextCreate] = useState(false)
-    const searchParams = useSearchParams()
-    const reader = new FileReader()
-    const router = useRouter()
-    const [cookies] = useCookies(['token'])
     const [previewImage, setPreviewImage] = useState<ImageData | null>(null)
     const [uploadImageUrlResponse, setUploadImageUrlResponse] = useState<
         string | null
     >(null)
+
+    const router = useRouter()
+    const reader = new FileReader()
+    const searchParams = useSearchParams()
+    const [cookies] = useCookies(['token'])
+    const { setIsLoading } = useLayoutContext()
 
     const cardCreateForm = useForm<CardCreateForm>({
         resolver: zodResolver(CardCreateSchema),
@@ -78,6 +80,22 @@ export const CreateCardPage = () => {
         },
     ] as const
 
+    const handleDeletePreviewImage = () => {
+        setPreviewImage(null)
+        setUploadImageUrlResponse(null)
+    }
+
+    const onSubmitCreateCard: SubmitHandler<CardCreateForm> = async (data) => {
+        await createCard(data)
+        if (isNextCreate) {
+            cardCreateForm.reset()
+            setPreviewImage(null)
+            setUploadImageUrlResponse(null)
+            return
+        }
+        router.push(`/pages/cards?deck=${searchParams.get('deck')}`)
+    }
+
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0]
         const deckId = searchParams.get('deck')
@@ -89,13 +107,13 @@ export const CreateCardPage = () => {
             const requestBody = {
                 upload_image: file,
             }
-            const response = await apiPostForFile(
-                `http://127.0.0.1:8000/upload-card-image/${deckId}`,
-                requestBody,
-                token,
-            )
+            const urlParams: UpdateUrlParams = {
+                endpoint: `upload-card-image/${deckId}`,
+                body: requestBody,
+                token: token,
+            }
+            const response = await apiPostForFile(urlParams)
 
-            setIsLoading(false)
             if (response) {
                 reader.readAsDataURL(file)
                 reader.onload = () => {
@@ -104,12 +122,12 @@ export const CreateCardPage = () => {
                         name: file.name,
                     })
                 }
-                setUploadImageUrlResponse(response.data)
+                setUploadImageUrlResponse(response)
             }
         } catch (error) {
             console.log(error)
-            setIsLoading(false)
         }
+        setIsLoading(false)
     }, [])
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -132,30 +150,16 @@ export const CreateCardPage = () => {
                 image_path: uploadImageUrlResponse,
                 etymology: data.etymology,
             }
-            const response = await apiPost(
-                `http://127.0.0.1:8000/card/${deckId}`,
-                requestBody,
-                token,
-            )
-
-            setIsLoading(false)
-            if (response) {
+            const urlParams: UpdateUrlParams = {
+                endpoint: `card/${deckId}`,
+                body: requestBody,
+                token: token,
             }
+            const response = await apiPost(urlParams)
         } catch (error) {
             console.log(error)
-            setIsLoading(false)
         }
-    }
-
-    const onSubmitCreateCard: SubmitHandler<CardCreateForm> = async (data) => {
-        await createCard(data)
-        if (isNextCreate) {
-            cardCreateForm.reset()
-            setPreviewImage(null)
-            setUploadImageUrlResponse(null)
-            return
-        }
-        router.push(`/pages/cards?deck=${searchParams.get('deck')}`)
+        setIsLoading(false)
     }
 
     return (
@@ -194,54 +198,15 @@ export const CreateCardPage = () => {
                     <div className="p-2 mb-10">
                         <h1 className="mb-3 text-lg">画像アップロード</h1>
                         {previewImage ? (
-                            <div className="flex border border-flowerBlue p-2">
-                                <img
-                                    className="object-contain md:h-36 md:w-48 h-16 w-28 rounded-lg"
-                                    src={previewImage.path}
-                                    alt=""
-                                />
-                                <p className="grow mr-10 p-2">
-                                    {previewImage.name}
-                                </p>
-                                <div className="flex justify-center items-center">
-                                    <button
-                                        onClick={() => setPreviewImage(null)}
-                                        className="bg-deep-light dark:bg-deep-dark p-2 rounded-lg"
-                                    >
-                                        <IconContext.Provider
-                                            value={{ size: '30px' }}
-                                        >
-                                            <RiCloseLargeFill />
-                                        </IconContext.Provider>
-                                    </button>
-                                </div>
-                            </div>
+                            <UploadImagePreviewForm
+                                previewImage={previewImage}
+                                onClickDelete={handleDeletePreviewImage}
+                            />
                         ) : (
-                            <div className="flex justify-center w-full">
-                                <div className="flex grow justify-center">
-                                    <div
-                                        className="w-full border-dashed border border-flowerBlue flex justify-center p-5 mb-2 cursor-pointer"
-                                        {...getRootProps()}
-                                    >
-                                        <input
-                                            {...getInputProps()}
-                                            accept=".jpg, .jpeg, .png, .bmp"
-                                        />
-                                        <div className="container flex justify-center text-xs">
-                                            <div className="flex flex-col items-center justify-center opacity-70">
-                                                <IconContext.Provider
-                                                    value={{ size: '30px' }}
-                                                >
-                                                    <RiImageAddLine />
-                                                </IconContext.Provider>
-                                                <p className="text-sm mt-5">
-                                                    画像を選択またはドラッグ&ドロップ
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <UploadImageForm
+                                getRootProps={getRootProps}
+                                getInputProps={getInputProps}
+                            />
                         )}
                     </div>
                     <div className="flex justify-around items-center">

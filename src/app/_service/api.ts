@@ -1,78 +1,79 @@
 import axios from 'axios'
 
-export const apiGet = async (endpoint: string, token?: string) => {
-    const response = await axios.get(endpoint, {
+export const baseUrl = 'http://127.0.0.1:8000/'
+
+export type UrlParams = {
+    endpoint: string
+    token?: string
+}
+
+export type UpdateUrlParams = {
+    body: any
+} & UrlParams
+
+export const apiGet = async (urlParams: UrlParams) => {
+    const url = `${baseUrl}${urlParams.endpoint}/`
+    const response = await axios.get(url, {
         headers: {
             'Content-Type': 'application/json',
-            Authorization: token && `Bearer ${token}`,
+            Authorization: urlParams.token && `Bearer ${urlParams.token}`,
         },
     })
     return response.data
 }
 
-export const apiGetV2 = async (endpoint: string, token?: string) => {
-    const response = await axios.get(endpoint, {
-        headers: {
-            'Content-Type': 'application/json',
-            responseType: 'blob',
-            Authorization: token && `Bearer ${token}`,
-        },
-    })
-    return response.data
-}
-
-export const apiPost = async <T>(endpoint: string, body: T, token?: string) => {
+export const apiPost = async (urlParams: UpdateUrlParams) => {
+    const url = `${baseUrl}${urlParams.endpoint}/`
     const response = await axios.post(
-        endpoint,
-        { ...body },
+        url,
+        { ...urlParams.body },
         {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: token && `Bearer ${token}`,
+                Authorization: urlParams.token && `Bearer ${urlParams.token}`,
             },
         },
     )
-    return response
+    return response.data
 }
 
-export const apiPostForFile = async <T>(
-    endpoint: string,
-    body: T,
-    token?: string,
-) => {
+export const apiPostForFile = async (urlParams: UpdateUrlParams) => {
+    const url = `${baseUrl}${urlParams.endpoint}/`
     const response = await axios.post(
-        endpoint,
-        { ...body },
+        url,
+        { ...urlParams.body },
         {
             headers: {
                 'Content-Type': 'multipart/form-data',
-                Authorization: token && `Bearer ${token}`,
+                Authorization: urlParams.token && `Bearer ${urlParams.token}`,
             },
         },
     )
-    return response
+    return response.data
 }
 
-export const apiPut = async <T>(endpoint: string, body: T, token: string) => {
+export const apiPut = async (urlParams: UpdateUrlParams) => {
+    const url = `${baseUrl}${urlParams.endpoint}/`
     const response = await axios.put(
-        endpoint,
-        { ...body },
+        url,
+        { ...urlParams.body },
         {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: token && `Bearer ${token}`,
+                Authorization: urlParams.token && `Bearer ${urlParams.token}`,
             },
         },
     )
-    return response
+    return response.data
 }
 
-export const apiDelete = async (endpoint: string, token: string) => {
-    const response = axios.delete(endpoint, {
+export const apiDelete = async (urlParams: UrlParams) => {
+    const url = `${baseUrl}${urlParams.endpoint}/`
+    const response = await axios.delete(url, {
         headers: {
             'Content-Type': 'application/json',
-            Authorization: token && `Bearer ${token}`,
+            Authorization: urlParams.token && `Bearer ${urlParams.token}`,
         },
     })
-    return response
+    return response.data
 }

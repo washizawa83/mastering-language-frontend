@@ -2,12 +2,18 @@ import { BaseModal } from '@/app/_components/BaseModal'
 import { MenuButton } from '@/app/_components/MenuButton'
 import { BaseButton } from '@/app/_forms/BaseButton'
 import { BaseInput } from '@/app/_forms/BaseInput'
-import { apiDelete, apiPut } from '@/app/_service/api'
+import {
+    apiDelete,
+    apiPut,
+    UpdateUrlParams,
+    UrlParams,
+} from '@/app/_service/api'
 import {
     DeckCreateRequest,
     DeckWithCardCountResponse,
 } from '@/app/_types/decks'
 import { CreateDeckForm, createDeckSchema } from '@/app/pages/decks/page'
+import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -32,11 +38,12 @@ const deleteDeckSchema = z.object({
 })
 
 export const Deck = ({ deck }: Props) => {
-    const [deckViewModel, setDeckViewModel] =
-        useState<DeckWithCardCountResponse | null>(deck)
     const [isOpenEditModal, setIsOpenEditModal] = useState(false)
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
-    const [, setIsLoading] = useState(false)
+    const [deckViewModel, setDeckViewModel] =
+        useState<DeckWithCardCountResponse | null>(deck)
+
+    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const router = useRouter()
 
@@ -44,13 +51,13 @@ export const Deck = ({ deck }: Props) => {
         resolver: zodResolver(createDeckSchema),
     })
 
-    const onSubmitEditDeck: SubmitHandler<CreateDeckForm> = async (data) => {
-        await editDeck(data)
-    }
-
     const deleteDeckForm = useForm<DeleteDeckForm>({
         resolver: zodResolver(deleteDeckSchema),
     })
+
+    const onSubmitEditDeck: SubmitHandler<CreateDeckForm> = async (data) => {
+        await editDeck(data)
+    }
 
     const onSubmitDeleteDeck: SubmitHandler<DeleteDeckForm> = async () => {
         await deleteDeck()
@@ -70,45 +77,45 @@ export const Deck = ({ deck }: Props) => {
     ]
 
     const editDeck = async (data: CreateDeckForm) => {
+        const token = cookies.token
+        if (!token) return
+
         setIsLoading(true)
         try {
-            const token = cookies.token
-            if (!token) return
             const requestBody: DeckCreateRequest = {
                 name: data.name,
             }
-            const response = await apiPut(
-                `http://127.0.0.1:8000/deck/${deck.id}`,
-                requestBody,
-                token,
-            )
-            if (response) {
-                setDeckViewModel(response.data)
+            const urlParams: UpdateUrlParams = {
+                endpoint: `deck/${deck.id}`,
+                body: requestBody,
+                token: token,
             }
-            setIsLoading(false)
+            const response = await apiPut(urlParams)
+            if (response) {
+                setDeckViewModel(response)
+            }
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     const deleteDeck = async () => {
+        const token = cookies.token
+        if (!token) return
+
         setIsLoading(true)
         try {
-            const token = cookies.token
-            if (!token) return
-            const response = await apiDelete(
-                `http://127.0.0.1:8000/deck/${deck.id}`,
-                token,
-            )
-            if (response) {
-                setDeckViewModel(response.data)
+            const urlParams: UrlParams = {
+                endpoint: `deck/${deck.id}`,
+                token: token,
             }
-            setIsLoading(false)
+            const response = await apiDelete(urlParams)
+            setDeckViewModel(response)
         } catch (error) {
-            setIsLoading(false)
             console.log(error)
         }
+        setIsLoading(false)
     }
 
     if (!deckViewModel) return

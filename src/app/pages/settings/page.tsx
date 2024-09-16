@@ -9,14 +9,14 @@ export const SettingsPage = () => {
     const [isDarkMode, setIsDarkMode] = useState(false)
     const { toggleTheme, theme } = useTheme()
 
+    useEffect(() => {
+        theme === 'dark' && setIsDarkMode(true)
+    }, [])
+
     const onToggleTheme = () => {
         toggleTheme()
         setIsDarkMode(!isDarkMode)
     }
-
-    useEffect(() => {
-        theme === 'dark' && setIsDarkMode(true)
-    }, [])
 
     return (
         <BaseAuthForm title="Settings">
