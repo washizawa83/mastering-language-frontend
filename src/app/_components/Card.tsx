@@ -66,7 +66,8 @@ export const Card = ({ card }: Props) => {
     useEffect(() => {
         const fetchImage = async () => {
             const token = cookies.token
-            if (!token) return
+            const imagePath = card.imagePath
+            if (!token || !imagePath) return
 
             setIsLoading(true)
             try {
