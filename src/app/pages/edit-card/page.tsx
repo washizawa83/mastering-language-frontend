@@ -219,7 +219,7 @@ export const EditCardPage = () => {
                 body: requestBody,
                 token: token,
             }
-            const response = await apiPut(urlParams)
+            await apiPut(urlParams)
             setSnackbarParam({
                 isVisible: true,
                 message: 'カードを編集しました',

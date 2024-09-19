@@ -14,7 +14,9 @@ export const BaseAuthForm = ({ title, children }: Props) => {
                     <div className="text-center bg-profound-light dark:bg-profound-dark p-3 mb-5">
                         <h2 className="text-xl">{title}</h2>
                     </div>
-                    {children}
+                    <div className="min-h-64 max-h-[30rem] overflow-y-auto">
+                        {children}
+                    </div>
                 </div>
             </div>
         </BasePage>
