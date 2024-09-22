@@ -7,6 +7,7 @@ export type DeckResponse = {
 
 export type DeckWithCardCountResponse = {
     cardCount: number
+    answerReplayCount: number
 } & DeckResponse
 
 export type DeckCreateRequest = {
