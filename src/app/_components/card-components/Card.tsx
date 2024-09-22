@@ -18,11 +18,11 @@ import { z } from 'zod'
 type Props = {
     card: CardResponse
 }
-interface DeleteCardForm {
+export interface DeleteCardForm {
     delete: string
 }
 
-const deleteDeckSchema = z.object({
+export const deleteDeckSchema = z.object({
     delete: z.string().refine((val) => val === '削除', {
         message: '削除と入力してください',
     }),

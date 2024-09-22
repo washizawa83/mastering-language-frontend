@@ -154,6 +154,16 @@ export const Deck = ({ deck }: Props) => {
                             <div className="flex justify-between items-center pr-5 ">
                                 <h3>{deckViewModel.name}</h3>
                             </div>
+                            <div className="flex items-center justify-end">
+                                <h3 className="md:text-3xl text-xl font-mono font-light text-flowerBlue pr-2 mr-5 md:mr-10">
+                                    {deck.answerReplayCount
+                                        ? deck.answerReplayCount
+                                        : 0}
+                                    <span className="text-xs">
+                                        /replay answer
+                                    </span>
+                                </h3>
+                            </div>
                         </div>
                         <div className="flex justify-center items-center relative">
                             <span className="absolute top-0 right-0">

@@ -26,7 +26,8 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
-        "src/app/_layouts/BaseLayouttsx"
+        "src/app/_layouts/BaseLayouttsx",
+        "src/app/pages/edit-card"
     ],
     "exclude": ["node_modules"]
 }

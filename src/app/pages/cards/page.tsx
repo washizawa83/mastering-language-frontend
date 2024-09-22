@@ -1,30 +1,35 @@
 'use client'
-import { Button } from '@/app/_components/Button'
-import { Card } from '@/app/_components/Card'
+import { CardAnswerList } from '@/app/_components/card-components/CardAnswerList'
+import { CardList } from '@/app/_components/card-components/CardList'
+import { Tab } from '@/app/_components/Tab'
 import { BasePage } from '@/app/_layouts/BasePage'
-import { apiGet, UrlParams } from '@/app/_service/api'
+import { UrlParams, apiGet } from '@/app/_service/api'
 import { CardResponse } from '@/app/_types/cards'
 import { useLayoutContext } from '@/app/providers/LayoutProvider'
 import camelcaseKeys from 'camelcase-keys'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { BsPlusLg, BsSearch } from 'react-icons/bs'
+
+export type TabPageNames = 'list' | 'answer' | 'master'
 
 export const CardsPage = () => {
     const [cards, setCards] = useState<CardResponse[] | null>(null)
+    const [answerReplayCards, setAnswerReplayCards] = useState<
+        CardResponse[] | null
+    >(null)
+    const [tabPage, setTabPage] = useState<TabPageNames>('list')
 
-    const { setIsLoading } = useLayoutContext()
     const [cookies] = useCookies(['token'])
     const searchParams = useSearchParams()
-    const router = useRouter()
+    const { setIsLoading } = useLayoutContext()
 
     useEffect(() => {
-        const fetchCards = async () => {
-            const token = cookies.token
-            const deckId = searchParams.get('deck')
-            if (!token || !deckId) return
+        const token = cookies.token
+        const deckId = searchParams.get('deck')
+        if (!token || !deckId) return
 
+        const fetchCards = async () => {
             setIsLoading(true)
             try {
                 const urlParams: UrlParams = {
@@ -39,43 +44,71 @@ export const CardsPage = () => {
             setIsLoading(false)
         }
 
+        const fetchAnswerReplayCards = async () => {
+            setIsLoading(true)
+            try {
+                const urlParams: UrlParams = {
+                    endpoint: `answer-replay-cards/${deckId}`,
+                    token: token,
+                }
+                const cards = await apiGet(urlParams)
+                setAnswerReplayCards(camelcaseKeys(cards))
+            } catch (error) {
+                console.log(error)
+            }
+            setIsLoading(false)
+        }
+
         fetchCards()
+        fetchAnswerReplayCards()
     }, [])
 
-    const onGoToCreateCardPage = () => {
-        const deckId = searchParams.get('deck')
-        router.push(`/pages/create-card?deck=${deckId}`)
+    const handleTabAction = (tabName: TabPageNames) => {
+        setTabPage(tabName)
     }
 
     return (
         <BasePage>
-            <div className="mt-10">
-                <div className="flex items-center justify-between mb-10">
-                    <div className="md:basis-2/6">
-                        <div className="relative">
-                            <span className="absolute top-2 left-0">
-                                <BsSearch />
-                            </span>
-                            <input
-                                type="text"
-                                className="bg-transparent border-b-2 focus:outline-none focus:border-focus h-8 p-1 w-full pl-5"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <Button
-                            label="カード追加"
-                            icon={<BsPlusLg />}
-                            onClick={() => onGoToCreateCardPage()}
+            <div className="w-full">
+                <ul className="flex items-center justify-between md:justify-normal mt-7">
+                    <li className="md:mr-10">
+                        <Tab
+                            name="カード一覧"
+                            tabPageName="list"
+                            isSelected={tabPage === 'list'}
+                            onTabChange={handleTabAction}
                         />
-                    </div>
-                </div>
-                {cards && cards.length > 0 ? (
-                    cards?.map((card) => <Card key={card.id} card={card} />)
-                ) : (
-                    <h3 className="text-center">カードが追加されていません</h3>
-                )}
+                    </li>
+                    <li className="md:mr-10">
+                        <Tab
+                            name="回答待ち"
+                            tabPageName="answer"
+                            isSelected={tabPage === 'answer'}
+                            badge={
+                                answerReplayCards &&
+                                answerReplayCards.length > 0 && (
+                                    <span className="text-sm">
+                                        {answerReplayCards.length}
+                                    </span>
+                                )
+                            }
+                            onTabChange={handleTabAction}
+                        />
+                    </li>
+                    <li className="md:mr-10">
+                        <Tab
+                            name="習得済み"
+                            tabPageName="master"
+                            isSelected={tabPage === 'master'}
+                            onTabChange={handleTabAction}
+                        />
+                    </li>
+                </ul>
             </div>
+            {tabPage === 'list' && <CardList cards={cards} />}
+            {tabPage === 'answer' && (
+                <CardAnswerList cards={answerReplayCards} />
+            )}
         </BasePage>
     )
 }
